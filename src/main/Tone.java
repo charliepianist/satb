@@ -50,6 +50,11 @@ public class Tone {
 	public static final Tone Bb4 = new Tone(B, 4, -1);
 	public static final Tone B4 = new Tone(B, 4);
 	public static final Tone Bs4 = new Tone (B, 4, 1);
+
+	public static final Tone C2 = new Tone (C, 2);
+	public static final Tone C3 = new Tone(C, 3);
+	public static final Tone C5 = new Tone (C, 5);
+	public static final Tone C6 = new Tone(C, 6);
 	
 	private int key;
 	private int octave;
@@ -68,6 +73,10 @@ public class Tone {
 		this.key = key;
 		this.octave = octave;
 		value = defaultValue(key, octave) + offset;
+	}
+	
+	public Tone(Tone other) {
+		this(other.key, other.octave, other.offset);
 	}
 	
 	public int getKey() {
@@ -123,8 +132,32 @@ public class Tone {
 		return new Tone(newKey, newOctave, newOffset);
 	}
 	
-	public boolean equals(Tone other) {
-		return this.key == other.key && this.octave == other.octave && this.offset == other.offset && this.value == other.value;
+	// Returns whether this Tone is lower than the other
+	public boolean lt(Tone other) {
+		return this.getValue() < other.getValue();
+	}
+	
+	// Returns whether this Tone is lower than or equal to the other
+	public boolean leq(Tone other) {
+		return this.getValue() <= other.getValue();
+	}
+	
+	// Returns whether this Tone is greater than the other
+	public boolean gt(Tone other) {
+		return this.getValue() > other.getValue();
+	}
+	
+	// Returns whether this Tone is greater than or equal to the other
+	public boolean geq(Tone other) {
+		return this.getValue() >= other.getValue();
+	}
+	
+	public boolean equals(Object other) {
+		if(other == this) return true;
+		if(other == null) return false;
+		if(!(other instanceof Tone)) return false;
+		Tone t = (Tone) other;
+		return this.key == t.key && this.octave == t.octave && this.offset == t.offset && this.value == t.value;
 	}
 	
 	public String toString() {

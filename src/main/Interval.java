@@ -59,6 +59,9 @@ public class Interval {
 	public static final Interval P8 = new Interval(MAJPERF, 8);
 	public static final Interval OCTAVE = P8;
 	public static final Interval A8 = new Interval(AUG, 8);
+	// Octaves
+	public static final Interval TWO_OCTAVES = new Interval(MAJPERF, 15);
+	public static final Interval THREE_OCTAVES = new Interval(MAJPERF, 22);
 	
 	// The offset from major/perfect interval of this type
 	private int quality;
@@ -74,6 +77,10 @@ public class Interval {
 		this.interval = interval;
 
 		this.offset = defaultOffset(interval) + quality;
+	}
+	
+	public Interval(Interval other) {
+		this(other.quality, other.interval);
 	}
 	
 	public int getQuality() {
@@ -147,6 +154,26 @@ public class Interval {
 		return new Interval(newQuality, newInterval);
 	}
 	
+	// Checks if this interval is less than the other in pure offset value.
+	public boolean lt(Interval other) {
+		return this.getOffset() < other.getOffset();
+	}
+	
+	// Checks if this interval is less than or equal to the other in pure offset value.
+	public boolean leq(Interval other) {
+		return this.getOffset() <= other.getOffset();
+	}
+	
+	// Checks if this interval is greater than the other in pure offset value.
+	public boolean gt(Interval other) {
+		return this.getOffset() > other.getOffset();
+	}
+	
+	// Checks if this interval is greater than or equal to the other in pure offset value.
+	public boolean geq(Interval other) {
+		return this.getOffset() >= other.getOffset();
+	}
+	
 	// Finds interval between two tones. Gets the interval between note with lower key/octave, or if they are equal, with lower pitch
 	// and the higher note.
 	public static Interval intervalBetween(Tone one, Tone two) {
@@ -193,8 +220,12 @@ public class Interval {
 		return str;
 	}
 	
-	public boolean equals(Interval other) {
-		return this.interval == other.interval && this.quality == other.quality;
+	public boolean equals(Object other) {
+		if(other == this) return true;
+		if(other == null) return false;
+		if(!(other instanceof Interval)) return false;
+		Interval i = (Interval) other;
+		return this.interval == i.interval && this.quality == i.quality;
 	}
 	
 	// Basic testing module
