@@ -39,6 +39,7 @@ public class Triad implements Chord {
 		if(middle == null || top == null) throw new IllegalArgumentException("Middle and Top must be non-null values.");
 		if(middle.lt(Interval.UNISON)) throw new IllegalArgumentException("Middle cannot be lower than a perfect unison.");
 		if(middle.gt(top)) throw new IllegalArgumentException("Top interval cannot be lower than middle interval.");
+		if(top.gt(Interval.OCTAVE)) throw new IllegalArgumentException("Top interval cannot exceed a perfect octave.");
 		this.middle = middle;
 		this.top = top;
 	}
