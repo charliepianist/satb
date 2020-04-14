@@ -23,7 +23,9 @@ public class Interval {
 	
 	public static final int OCTAVE_STEPS = 12;
 	
+	public static final Interval d1 = new Interval(MIN, 1);
 	public static final Interval UNISON = new Interval(MAJPERF, 1);
+	public static final Interval A1 = new Interval(AUG, 1);
 	// 2nds
 	public static final Interval d2 = new Interval(DIM, 2);
 	public static final Interval m2 = new Interval(MIN, 2);
@@ -145,12 +147,40 @@ public class Interval {
 		return new Interval(newQuality, newInterval);
 	}
 	
+	// Finds interval between two tones. Gets the interval between note with lower key/octave, or if they are equal, with lower pitch
+	// and the higher note.
+	public static Interval intervalBetween(Tone one, Tone two) {
+		// t1 note+octave below t2 if not equal
+		Tone t1 = null, t2 = null;
+		if(one.getAbsoluteKey() > two.getAbsoluteKey()) {
+			t2 = one;
+			t1 = two;
+		}else if(one.getAbsoluteKey() < two.getAbsoluteKey()) {
+			t1 = one;
+			t2 = two;
+		}else {
+			if(one.getValue() > two.getValue()) {
+				t2 = one;
+				t1 = two;
+			}else {
+				t1 = one;
+				t2 = two;
+			}
+		}
+		
+		int interval = t2.getAbsoluteKey() - t1.getAbsoluteKey() + 1;
+		int offset = t2.getValue() - t1.getValue();
+		int quality = offset - defaultOffset(interval);
+		
+		return new Interval(quality, interval);
+	}
+	
 	public String toString() {
 		String str = "";
 		
 		if(quality > AUG) str = "Augmented+" + (quality - AUG);
 		if(quality == AUG) str = "Augmented";
-		if(quality == MAJPERF) str = "Major/Perfect";
+		if(quality == MAJPERF) str = isPerfect(interval) ? "Perfect" : "Major";
 		if(isPerfect(this.interval)) {
 			if(quality == MIN) str = "Diminished";
 			if(quality < MIN) str = "Diminished-" + (MIN - quality);
@@ -183,5 +213,15 @@ public class Interval {
 		System.out.println(i1.add(i2.sub(i1)).equals(i2));
 		System.out.println(i3.sub(i5));
 		System.out.println(i3.add(i4.sub(i3)).equals(i4));
+		
+		Tone t1 = Tone.A4;
+		Tone t2 = new Tone(Tone.E, 4, -5);
+		System.out.println("Interval between " + t1 + " and " + t2 + " is " + Interval.intervalBetween(t1, t2));		
+		t1 = Tone.C4.down(Interval.m3); // A3
+		t2 = Tone.Fs4.up(Interval.A1); // F##4
+		System.out.println("Interval between " + t1 + " and " + t2 + " is " + Interval.intervalBetween(t1, t2));		
+		t1 = Tone.C4.down(Interval.d5); // F#3
+		t2 = Tone.Ds4.up(Interval.m3); // F#4
+		System.out.println("Interval between " + t1 + " and " + t2 + " is " + Interval.intervalBetween(t1, t2));
 	}
 }

@@ -70,6 +70,27 @@ public class Tone {
 		value = defaultValue(key, octave) + offset;
 	}
 	
+	public int getKey() {
+		return key;
+	}
+	
+	public int getOctave() {
+		return octave;
+	}
+	
+	// Key + Octave * 7, offset so A0 = 0
+	public int getAbsoluteKey() {
+		return key + octave * 7 - A;
+	}
+	
+	public int getOffset() {
+		return offset;
+	}
+	
+	public int getValue() {
+		return value;
+	}
+	
 	public static int defaultValue(int key, int octave) {
 		if(key > B || key < C) throw new IllegalArgumentException("Key must be between " + C + " and " + B + ".");
 		return octave * Interval.OCTAVE_STEPS + keyOffsets[key];
