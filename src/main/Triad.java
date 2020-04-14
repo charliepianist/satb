@@ -8,29 +8,29 @@ public class Triad implements Chord {
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
 	public static final Tone HIGHEST_TONE = Tone.C6;
 
-	public static final Triad AUGMENTED = new Triad(Interval.M3, Interval.A5);
-	public static final Triad AUGMENTED53 = AUGMENTED;
-	public static final Triad AUGMENTED6 = new Triad(Interval.M3, Interval.m6);
-	public static final Triad AUGMENTED63 = AUGMENTED6;
-	public static final Triad AUGMENTED64 = new Triad(Interval.d4, Interval.m6);
+	public static final Triad AUG = new Triad(Interval.M3, Interval.A5);
+	public static final Triad AUG53 = AUG;
+	public static final Triad AUG6 = new Triad(Interval.M3, Interval.m6);
+	public static final Triad AUG63 = AUG6;
+	public static final Triad AUG64 = new Triad(Interval.d4, Interval.m6);
 
-	public static final Triad MAJOR = new Triad(Interval.M3, Interval.P5);
-	public static final Triad MAJOR53 = MAJOR;
-	public static final Triad MAJOR6 = new Triad(Interval.m3, Interval.m6);
-	public static final Triad MAJOR63 = MAJOR6;
-	public static final Triad MAJOR64 = new Triad(Interval.P4, Interval.M6);
+	public static final Triad MAJ = new Triad(Interval.M3, Interval.P5);
+	public static final Triad MAJ53 = MAJ;
+	public static final Triad MAJ6 = new Triad(Interval.m3, Interval.m6);
+	public static final Triad MAJ63 = MAJ6;
+	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6);
 	
-	public static final Triad MINOR = new Triad(Interval.m3, Interval.P5);
-	public static final Triad MINOR53 = MINOR;
-	public static final Triad MINOR6 = new Triad(Interval.M3, Interval.M6);
-	public static final Triad MINOR63 = MINOR6;
-	public static final Triad MINOR64 = new Triad(Interval.P4, Interval.m6);
+	public static final Triad MIN = new Triad(Interval.m3, Interval.P5);
+	public static final Triad MIN53 = MIN;
+	public static final Triad MIN6 = new Triad(Interval.M3, Interval.M6);
+	public static final Triad MIN63 = MIN6;
+	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6);
 	
-	public static final Triad DIMINISHED = new Triad(Interval.m3, Interval.d5);
-	public static final Triad DIMINISHED53 = DIMINISHED;
-	public static final Triad DIMINISHED6 = new Triad(Interval.m3, Interval.M6);
-	public static final Triad DIMINISHED63 = DIMINISHED6;
-	public static final Triad DIMINISHED64 = new Triad(Interval.A4, Interval.M6);
+	public static final Triad DIM = new Triad(Interval.m3, Interval.d5);
+	public static final Triad DIM53 = DIM;
+	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6);
+	public static final Triad DIM63 = DIM6;
+	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6);
 	
 	Interval middle;
 	Interval top;
@@ -115,20 +115,30 @@ public class Triad implements Chord {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(Triad.MAJOR);
-		System.out.println(Triad.MAJOR6);
-		System.out.println(Triad.MAJOR64);
-		System.out.println(Triad.MINOR);
-		System.out.println(Triad.MINOR6);
-		System.out.println(Triad.MINOR64);
-		System.out.println(Triad.AUGMENTED);
-		System.out.println(Triad.AUGMENTED6);
-		System.out.println(Triad.AUGMENTED64);
-		System.out.println(Triad.DIMINISHED);
-		System.out.println(Triad.DIMINISHED6);
-		System.out.println(Triad.DIMINISHED64);
-		
-		System.out.println(Triad.MINOR64.intervals());
-		System.out.println(Triad.MAJOR6.tones(Tone.A4.down(Interval.OCTAVE)));
+		System.out.println("MAJOR TRIADS");
+		System.out.println("==================");
+		System.out.println(Triad.MAJ);
+		System.out.println(Triad.MAJ6);
+		System.out.println(Triad.MAJ64);
+		System.out.println("\nMINOR TRIADS");
+		System.out.println("==================");
+		System.out.println(Triad.MIN);
+		System.out.println(Triad.MIN6);
+		System.out.println(Triad.MIN64);
+		System.out.println("\nAUGMENTED TRIADS");
+		System.out.println("==================");
+		System.out.println(Triad.AUG);
+		System.out.println(Triad.AUG6);
+		System.out.println(Triad.AUG64);
+		System.out.println("\nDIMINISHED TRIADS");
+		System.out.println("==================");
+		System.out.println(Triad.DIM);
+		System.out.println(Triad.DIM6);
+		System.out.println(Triad.DIM64);
+
+		System.out.println("\nIntervals and Tones");
+		System.out.println("===================");
+		System.out.println(Triad.MIN64.intervals());
+		System.out.println(Triad.MIN64.tones(Tone.A4.down(Interval.OCTAVE)));
 	}
 }
