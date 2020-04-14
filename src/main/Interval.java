@@ -17,10 +17,11 @@ public class Interval {
 			5, // Perfect 4th
 			7, // Perfect 5th
 			9, // Major 6th
-			11, // Major 7th
-			12 // Perfect 8th
+			11 // Major 7th
 		};
 	}
+	
+	public static final int OCTAVE_STEPS = 12;
 	
 	public static final Interval UNISON = new Interval(MAJPERF, 1);
 	// 2nds
@@ -54,16 +55,19 @@ public class Interval {
 	// 8ths
 	public static final Interval d8 = new Interval(DIM, 8);
 	public static final Interval P8 = new Interval(MAJPERF, 8);
+	public static final Interval OCTAVE = P8;
 	public static final Interval A8 = new Interval(AUG, 8);
 	
 	// The offset from major/perfect interval of this type
 	private int quality;
 	// 2nd, 3rd, Unison, etc
 	private int interval;
-	// The offset from a perfect/major interval of this type
+	// The actual offset from unison (i.e. Perfect 4 has offset 5)
 	private int offset;
 	
 	public Interval(int quality, int interval) {
+		if(interval < 1) throw new IllegalArgumentException("Interval cannot be less than 1.");
+		
 		this.quality = quality;
 		this.interval = interval;
 
@@ -78,13 +82,17 @@ public class Interval {
 		return this.interval;
 	}
 	
+	public int getOffset() {
+		return this.offset;
+	}
+	
 	// What is the offset for a Major/Perfect version of this interval?
 	public static int defaultOffset(int interval) {
 		if(interval <= 0) throw new IllegalArgumentException("Interval cannot be negative");
 		interval--;
 		int octaves = interval / 7;
 		int remainder = interval % 7 + 1;
-		return octaves * 12 + defaultOffsets[remainder];
+		return octaves * OCTAVE_STEPS + defaultOffsets[remainder];
 	}
 	
 	// Is a given interval one that is Major/Minor or Perfect?
