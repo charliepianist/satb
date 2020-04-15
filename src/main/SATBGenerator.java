@@ -1,162 +1,117 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class SATBGenerator {
-	private static final String[] files = new String[] {
-			"data/test1.txt",
-			"data/test2.txt"
-	};
+	public static final Tone SOPRANO_TOP = Tone.HIGHEST_TONE;
+	public static final Tone SOPRANO_BOTTOM = Tone.C4;
+	public static final Tone ALTO_TOP = Tone.D4.up(Interval.OCTAVE); // D5
+	public static final Tone ALTO_BOTTOM = Tone.F4.down(Interval.OCTAVE); // F3
+	public static final Tone TENOR_TOP = Tone.A4;
+	public static final Tone TENOR_BOTTOM = Tone.C3;
+	public static final Tone BASS_TOP = Tone.E4;
+	public static final Tone BASS_BOTTOM = Tone.LOWEST_TONE; // E2
 	
-	public static void main(String[] args) {
-		BufferedReader reader;
-		for(String filepath : files) {
-			try {
-				reader = new BufferedReader(new FileReader(filepath));
-				processFile(reader);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
+	private Voice s, a, t, b;
+	
+	public SATBGenerator() {
+		s = new Voice(SOPRANO_BOTTOM, SOPRANO_TOP);
+		a = new Voice(ALTO_BOTTOM, ALTO_TOP);
+		t = new Voice(TENOR_BOTTOM, TENOR_TOP);
+		b = new Voice(BASS_BOTTOM, BASS_TOP);
 	}
 	
-	public static Chord chordFromStr(String str) throws Exception {
-		str = str.toLowerCase();
-		switch(str) {
-		// MAJOR TRIADS
-		case "maj":
-			return Triad.MAJ;
-		case "maj6":
-		case "maj63":
-			return Triad.MAJ63;
-		case "maj64":
-			return Triad.MAJ64;
-		// MINOR TRIADS
-		case "min":
-			return Triad.MIN;
-		case "min6":
-		case "min63":
-			return Triad.MIN63;
-		case "min64":
-			return Triad.MIN64;
-		// AUGMENTED TRIADS
-		case "aug":
-			return Triad.AUG;
-		case "aug6":
-		case "aug63":
-			return Triad.AUG63;
-		case "aug64":
-			return Triad.AUG64;
-		// DIMINISHED TRIADS
-		case "dim":
-			return Triad.DIM;
-		case "dim6":
-		case "dim63":
-			return Triad.DIM63;
-		case "dim64":
-			return Triad.DIM64;
-		// SEVENTHS
-		// MAJOR SEVENTHS
-		case "maj7":
-			return Seventh.MAJ7;
-		case "maj65":
-			return Seventh.MAJ65;
-		case "maj43":
-			return Seventh.MAJ43;
-		case "maj42":
-			return Seventh.MAJ42;
-		// DOMINANT SEVENTHS
-		case "dom7":
-		case "dom":
-			return Seventh.DOM7;
-		case "dom65":
-			return Seventh.DOM65;
-		case "dom43":
-			return Seventh.DOM43;
-		case "dom42":
-			return Seventh.DOM42;
-		// MAJOR SEVENTHS
-		case "min7":
-			return Seventh.MIN7;
-		case "min65":
-			return Seventh.MIN65;
-		case "min43":
-			return Seventh.MIN43;
-		case "min42":
-			return Seventh.MIN42;
-		// MAJOR SEVENTHS
-		case "halfdim7":
-		case "halfdim":
-		case "hdim7":
-		case "hdim":
-			return Seventh.HALFDIM7;
-		case "halfdim65":
-		case "hdim65":
-			return Seventh.HALFDIM65;
-		case "halfdim43":
-		case "hdim43":
-			return Seventh.HALFDIM43;
-		case "halfdim42":
-		case "hdim42":
-			return Seventh.HALFDIM42;
-		// MAJOR SEVENTHS
-		case "dim7":
-			return Seventh.DIM7;
-		case "dim65":
-			return Seventh.DIM65;
-		case "dim43":
-			return Seventh.DIM43;
-		case "dim42":
-			return Seventh.DIM42;
-		}
-		throw new Exception("Chord parsing failed for string " + str);
-	}
-	
-	private static void processFile(BufferedReader reader) throws IOException, Exception {
-		String keyStr = reader.readLine();
-		String isToneStr = reader.readLine();
-		Tone tonic = Tone.fromString(keyStr);
+	public Voice[] generateSATB(Tone tonic, List<Interval> bassIntervals, List<Chord> chords) {
+		if(bassIntervals.size() != chords.size()) throw new IllegalArgumentException("bassIntervals must have same size as chords.");
+		if(bassIntervals.size() == 0 || chords.size() == 0) throw new IllegalArgumentException("bassIntervals and chords cannot be empty.");
 		tonic = Tone.LOWEST_TONE.nextInstanceOf(tonic);
-		boolean isTone = isToneStr.toLowerCase().equals("tones");
 		
-		ArrayList<Interval> bassIntervals = new ArrayList<Interval>();
-		ArrayList<Chord> chords = new ArrayList<Chord>();
+		if(generate(tonic, bassIntervals, chords, 0)) {
+			return new Voice[] { s, a, t, b };
+		}
+		return null;
+	}
+	
+	// Todo: Tritone resolution?
+	// True indicates success
+	private boolean generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index) {
+		Tone root = BASS_BOTTOM.nextInstanceOf(tonic.up(bassIntervals.get(index)));
+		Chord chord = chords.get(index);
+		Collection<Tone> tones = chord.tones(root);
+		ArrayList<Tone> currTones = new ArrayList<Tone>();
+		int numChords = bassIntervals.size();
 		
-		String next = reader.readLine();
-		while(next != null) {
-			String[] parts = next.split(":");
-			try {
-				if(parts.length < 2) throw new IllegalArgumentException("':' character missing to separate interval/tone and chord");
-				Chord currChord = chordFromStr(parts[1]);
-				chords.add(currChord);
-				
-				if(isTone) {
-					Tone temp = Tone.fromString(parts[0]);
-					temp = temp.up(currChord.rootToBass());
-					temp = tonic.nextInstanceOf(temp);
-					Interval i = Interval.intervalBetween(tonic, temp);
-					bassIntervals.add(i);
-				}else {
-					bassIntervals.add(Interval.normalize(Interval.fromString(parts[0]).add(currChord.rootToBass())));
+		for(Tone bassTone : b.filterInRange(root.allInstances())) {
+			// Bass must be there, so no need to check anything for this part
+			currTones.add(bassTone);
+			for(Tone tenorTone : t.validMoves(tones, bassTone, bassTone.up(Interval.TWO_OCTAVES), false)) {
+				// Check for parallel intervals
+				if(Voice.parallelPerfectIntervals(b, t, bassTone, tenorTone)) {
+					continue;
 				}
-			}catch(Exception e) {
-				System.err.println("Failed to parse line \"" + next + "\" into interval/tone and chord.");
-				e.printStackTrace();
-				return;
-			}
-			
-			next = reader.readLine();
-		}
-		
-		System.out.println(tonic);
-//		System.out.println(bassIntervals);
-//		System.out.println(chords);
-		for(int i = 0; i < bassIntervals.size(); i++) {
-			System.out.println(chords.get(i).baseChord(tonic.up(bassIntervals.get(i))));
-		}
+				// Are the current tones so far even eligible to form a valid chord?
+				currTones.add(tenorTone);
+				if(!chord.hasPotential(bassTone, currTones)) {
+					currTones.remove(1);
+					continue;
+				}
 
+				for(Tone altoTone : a.validMoves(tones, tenorTone, tenorTone.up(Interval.OCTAVE))) {
+					// Check for parallel intervals
+					if(Voice.parallelPerfectIntervals(b, a, bassTone, altoTone)
+							|| Voice.parallelPerfectIntervals(t, a, tenorTone, altoTone)) {
+						continue;
+					}
+					// Are the current tones so far even eligible to form a valid chord?
+					currTones.add(altoTone);
+					if(!chord.hasPotential(bassTone, currTones)) {
+						currTones.remove(2);
+						continue;
+					}
+					
+					
+					for(Tone sopranoTone : s.validMoves(tones, altoTone, altoTone.up(Interval.OCTAVE))) {
+						// Check for parallel intervals
+						if(Voice.parallelPerfectIntervals(b, s, bassTone, sopranoTone)
+								|| Voice.parallelPerfectIntervals(t, s, tenorTone, sopranoTone)
+								|| Voice.parallelPerfectIntervals(a, s, altoTone, sopranoTone)) {
+							continue;
+						}
+						currTones.add(sopranoTone);
+						if(!chord.hasPotential(bassTone, currTones)) {
+							currTones.remove(3);
+							continue;
+						}
+						s.add(sopranoTone);
+						a.add(altoTone);
+						t.add(tenorTone);
+						b.add(bassTone);
+						//System.out.println(String.join(" ", bassTone.toString(), tenorTone.toString(), altoTone.toString(), sopranoTone.toString()));
+						// Attempt using this combination of tones
+						if(index == numChords - 1) {
+							// We have found a combination for the last chord!
+							return true;
+						}
+						// Attempt to build off of this combination of tones
+						if(generate(tonic, bassIntervals, chords, index + 1)) {
+							return true;
+						}
+						s.pop();
+						a.pop();
+						t.pop();
+						b.pop();
+						
+						currTones.remove(3);
+					}
+					currTones.remove(2);
+				}
+				currTones.remove(1);
+			}
+			currTones.remove(0);
+		}
+		// Went through all possible combinations given past history and failed, so return false
+		return false;
 	}
 }

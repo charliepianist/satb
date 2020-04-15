@@ -1,5 +1,9 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class Tone {
 	// Value of C0
 	public static final int baseValue = -9;
@@ -144,10 +148,28 @@ public class Tone {
 	}
 	
 	// First instance of the other note that comes above this tone (e.g. D5.nextInstanceOf(A8) -> A5)
+	// Can equal this tone, if the tones are apart by some number of octaves exactly
 	public Tone nextInstanceOf(Tone other) {
 		Tone temp = new Tone(other.getKey(), octave, other.getOffset());
 		if(temp.lt(this)) temp = new Tone(other.getKey(), octave + 1, other.getOffset());
 		return temp;
+	}
+	
+	// This pitch at all octaves from lowest tone to highest tone
+	public List<Tone> allInstances() {
+		ArrayList<Tone> tones = new ArrayList<Tone>();
+		Tone tone = Tone.LOWEST_TONE.nextInstanceOf(this);
+		while(tone.leq(Tone.HIGHEST_TONE)) {
+			tones.add(tone);
+			tone = tone.up(Interval.OCTAVE);
+		}
+		
+		return tones;
+	}
+	
+	// The (positive) interval between this tone and another
+	public Interval intervalTo(Tone other) {
+		return Interval.intervalBetween(this, other);
 	}
 	
 	// Returns whether this Tone is lower than the other
@@ -181,6 +203,11 @@ public class Tone {
 		if(!(other instanceof Tone)) return false;
 		Tone t = (Tone) other;
 		return this.key == t.key && this.octave == t.octave && this.offset == t.offset && this.value == t.value;
+	}
+	
+	// Do these notes sound the same?
+	public boolean enharmonic(Tone other) {
+		return this.value == other.value;
 	}
 	
 	public String toString() {
@@ -257,6 +284,25 @@ public class Tone {
 	public static Tone max(Tone t1, Tone t2) {
 		if(t1.gt(t2)) return t1;
 		return t2;
+	}
+	
+	public static Comparator<Tone> byDistanceTo(Tone t) {
+		return new ToneDistanceComparator(t);
+	}
+	
+	private static class ToneDistanceComparator implements Comparator<Tone> {
+
+		private Tone ref;
+		
+		public ToneDistanceComparator(Tone ref) {
+			this.ref = ref;
+		}
+		
+		@Override
+		public int compare(Tone o1, Tone o2) {
+			return o1.dist(ref) - o2.dist(ref);
+		}
+		
 	}
 	
 	public static void main(String[] args) {

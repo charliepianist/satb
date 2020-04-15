@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface Chord {
 	// Intervals of acceptable notes *relative to the bass* (the lowest note), including the bass (Perfect Unison)
@@ -19,4 +20,7 @@ public interface Chord {
 	
 	// Interval from root tone *up to* bass tone (*add* interval to get bass tone from root tone).
 	public Interval rootToBass();
+	
+	// Is the current list of tones allowed?
+	public boolean hasPotential(Tone bass, List<Tone> tones);
 }

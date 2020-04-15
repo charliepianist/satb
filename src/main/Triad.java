@@ -1,7 +1,10 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import main.Util.Range;
 
 public class Triad implements Chord {
 	
@@ -10,44 +13,55 @@ public class Triad implements Chord {
 	public static final int SECOND = 2;
 
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
-
-	public static final Triad AUG = new Triad(Interval.M3, Interval.A5, ROOT);
+	
+	public static final Triad AUG = new Triad(Interval.M3, Interval.A5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad AUG53 = AUG;
-	public static final Triad AUG6 = new Triad(Interval.M3, Interval.m6, FIRST);
+	public static final Triad AUG6 = new Triad(Interval.M3, Interval.m6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad AUG63 = AUG6;
-	public static final Triad AUG64 = new Triad(Interval.d4, Interval.m6, SECOND);
+	public static final Triad AUG64 = new Triad(Interval.d4, Interval.m6, SECOND, new Range[] { Range.R12, Range.R12, Range.R12 });
 
-	public static final Triad MAJ = new Triad(Interval.M3, Interval.P5, ROOT);
+	public static final Triad MAJ = new Triad(Interval.M3, Interval.P5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad MAJ53 = MAJ;
-	public static final Triad MAJ6 = new Triad(Interval.m3, Interval.m6, FIRST);
+	public static final Triad MAJ6 = new Triad(Interval.m3, Interval.m6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad MAJ63 = MAJ6;
-	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6, SECOND);
+	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
+	public static final Triad MAJ_TRIP_ROOT = new Triad(Interval.M3, Interval.P5, ROOT, new Range[] { Range.R13, Range.R11, Range.R02 });
 	
-	public static final Triad MIN = new Triad(Interval.m3, Interval.P5, ROOT);
+	public static final Triad MIN = new Triad(Interval.m3, Interval.P5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad MIN53 = MIN;
-	public static final Triad MIN6 = new Triad(Interval.M3, Interval.M6, FIRST);
+	public static final Triad MIN6 = new Triad(Interval.M3, Interval.M6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad MIN63 = MIN6;
-	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6, SECOND);
+	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
+	public static final Triad MIN_TRIP_ROOT = new Triad(Interval.m3, Interval.P5, ROOT, new Range[] { Range.R13, Range.R11, Range.R02 });
 	
-	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT);
+	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT, new Range[] { Range.R12, Range.R11, Range.R12 });
 	public static final Triad DIM53 = DIM;
-	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6, FIRST);
+	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad DIM63 = DIM6;
-	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6, SECOND);
+	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
 	
-	Interval middle;
-	Interval top;
-	int inversion;
+	private Interval middle;
+	private Interval top;
+	private int inversion;
+	private Range[] allowedAmount;
+	private int df;
 	
-	public Triad(Interval middle, Interval top, int inversion) {
+	public Triad(Interval middle, Interval top, int inversion, Range[] allowedAmount) {
 		if(middle == null || top == null) throw new IllegalArgumentException("Middle and Top must be non-null values.");
 		if(middle.lt(Interval.UNISON)) throw new IllegalArgumentException("Middle cannot be lower than a perfect unison.");
 		if(middle.gt(top)) throw new IllegalArgumentException("Top interval cannot be lower than middle interval.");
 		if(top.gt(Interval.OCTAVE)) throw new IllegalArgumentException("Top interval cannot exceed a perfect octave.");
 		if(inversion != ROOT && inversion != FIRST && inversion != SECOND) throw new IllegalArgumentException("Chord must be in root, first, or second inversion.");
+		if(allowedAmount.length != 3) throw new IllegalArgumentException("Ranges must be of length 3");
 		this.inversion = inversion;
 		this.middle = middle;
 		this.top = top;
+		this.allowedAmount = allowedAmount;
+		df = 4 - allowedAmount[0].getMin() - allowedAmount[1].getMin() - allowedAmount[2].getMin();
+	}
+	
+	public Triad loosenTo(Range[] newAllowedAmount) {
+		return new Triad(middle, top, inversion, newAllowedAmount);
 	}
 	
 	@Override
@@ -121,6 +135,29 @@ public class Triad implements Chord {
 			return Interval.OCTAVE.sub(middle);
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean hasPotential(Tone bass, List<Tone> tones) {
+		int[] counter = new int[3];
+		for(Tone t : tones) {
+			if(Interval.intervalBetween(bass, bass.nextInstanceOf(t)).equals(Interval.UNISON)) {
+				counter[0]++;
+			}else if(Interval.intervalBetween(bass, bass.nextInstanceOf(t)).equals(middle)) {
+				counter[1]++;
+			}else if(Interval.intervalBetween(bass, bass.nextInstanceOf(t)).equals(top)) {
+				counter[2]++;
+			}
+		}
+		int cumulativedf = 0;
+		for(int i = 0; i < counter.length; i++) {
+			if(counter[i] > allowedAmount[i].getMax()) return false;
+			if(counter[i] - allowedAmount[i].getMin() > 0) {
+				cumulativedf += counter[i] - allowedAmount[i].getMin();
+			}
+		}
+		if(cumulativedf > df) return false;
+		return true;
 	}
 	
 	public String toString() {

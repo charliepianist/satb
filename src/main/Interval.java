@@ -283,6 +283,15 @@ public class Interval {
 		return this.interval == i.interval && this.quality == i.quality;
 	}
 	
+	public boolean enharmonic(Interval other) {
+		return Interval.enharmonic(this, other);
+	}
+	
+	// Do these intervals *sound* the same?
+	public static boolean enharmonic(Interval i1, Interval i2) {
+		return i1.offset == i2.offset;
+	}
+	
 	// Basic testing module
 	public static void main(String[] args) {
 		Interval i1 = Interval.P4;
