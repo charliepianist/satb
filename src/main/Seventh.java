@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 public class Seventh implements Chord {
 
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
-	public static final Tone HIGHEST_TONE = Tone.C6;
 
 	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7);
 	public static final Seventh MAJ65 = new Seventh(Interval.m3, Interval.P5, Interval.m6);
@@ -89,7 +88,7 @@ public class Seventh implements Chord {
 		
 		for(Interval i : intervals) {
 			Tone temp = bass.up(i);
-			if(temp.gt(HIGHEST_TONE))
+			if(temp.gt(Tone.HIGHEST_TONE))
 				return ret;
 			
 			ret.add(temp);

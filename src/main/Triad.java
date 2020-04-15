@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 public class Triad implements Chord {
 
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
-	public static final Tone HIGHEST_TONE = Tone.C6;
 
 	public static final Triad AUG = new Triad(Interval.M3, Interval.A5);
 	public static final Triad AUG53 = AUG;
@@ -79,7 +78,7 @@ public class Triad implements Chord {
 		
 		for(Interval i : intervals) {
 			Tone temp = bass.up(i);
-			if(temp.gt(HIGHEST_TONE))
+			if(temp.gt(Tone.HIGHEST_TONE))
 				return ret;
 			
 			ret.add(temp);

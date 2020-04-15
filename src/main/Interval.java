@@ -64,11 +64,11 @@ public class Interval {
 	public static final Interval THREE_OCTAVES = new Interval(MAJPERF, 22);
 	
 	// The offset from major/perfect interval of this type
-	private int quality;
+	private final int quality;
 	// 2nd, 3rd, Unison, etc
-	private int interval;
+	private final int interval;
 	// The actual offset from unison (i.e. Perfect 4 has offset 5)
-	private int offset;
+	private final int offset;
 	
 	public Interval(int quality, int interval) {
 		if(interval < 1) throw new IllegalArgumentException("Interval cannot be less than 1.");
@@ -174,6 +174,14 @@ public class Interval {
 		return this.getOffset() >= other.getOffset();
 	}
 	
+	// Brings interval down to (strictly) less than an octave
+	public static Interval normalize(Interval i) {
+		while(i.geq(Interval.OCTAVE)) {
+			i = i.sub(Interval.OCTAVE);
+		}
+		return i;
+	}
+	
 	// Finds interval between two tones. Gets the interval between note with lower key/octave, or if they are equal, with lower pitch
 	// and the higher note.
 	public static Interval intervalBetween(Tone one, Tone two) {
@@ -202,19 +210,64 @@ public class Interval {
 		return new Interval(quality, interval);
 	}
 	
+	public static Interval fromString(String str) {
+		if(str == null || str.length() == 0) 
+			throw new IllegalArgumentException("Cannot parse null/empty string into Interval");
+		char[] chars = str.toCharArray();
+		char type = chars[0];
+		int quality = 0;
+		switch(type) {
+		case 'A':
+		case 'a':
+			quality = AUG;
+			break;
+		case 'M':
+			quality = MAJPERF;
+			break;
+		case 'm':
+			quality = MIN;
+			break;
+		case 'D':
+		case 'd':
+			quality = DIM;
+			break;
+		default:
+			throw new IllegalArgumentException("Cannot parse string " + str + " into interval (invalid quality)");
+		}
+		int i = 1;
+	
+		while(chars[i] == '-' || chars[i] == '+') {
+			if(chars[i] == '-')
+				quality--;
+			else
+				quality++;
+			i++;
+		}
+		
+		String intervalStr = str.substring(i);
+		if(intervalStr.length() == 0)
+			throw new IllegalArgumentException("Cannot parse string " + str + " into interval (missing interval number)");
+		try {
+			int interval = Integer.parseInt(intervalStr);
+			return new Interval(quality, interval);
+		} catch(NumberFormatException e) {
+			throw new IllegalArgumentException("Cannot parse string " + str + " into interval (Does not end with interval number)");
+		}
+	}
+	
 	public String toString() {
 		String str = "";
 		
-		if(quality > AUG) str = "Augmented+" + (quality - AUG);
+		if(quality > AUG) str = "Augmented" + Util.repeatChar('+', (quality - AUG));
 		if(quality == AUG) str = "Augmented";
 		if(quality == MAJPERF) str = isPerfect(interval) ? "Perfect" : "Major";
 		if(isPerfect(this.interval)) {
 			if(quality == MIN) str = "Diminished";
-			if(quality < MIN) str = "Diminished-" + (MIN - quality);
+			if(quality < MIN) str = "Diminished" + Util.repeatChar('-', (MIN - quality));
 		}else {
 			if(quality == MIN) str = "Minor";
 			if(quality == DIM) str = "Diminished";
-			if(quality < DIM) str = "Diminished-" + (DIM - quality);
+			if(quality < DIM) str = "Diminished" + Util.repeatChar('-', (DIM - quality));
 		}
 		str += " " + interval;
 		return str;

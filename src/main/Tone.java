@@ -28,6 +28,9 @@ public class Tone {
 		};
 	}
 
+	public static final Tone LOWEST_TONE = new Tone(E, 2);
+	public static final Tone HIGHEST_TONE = Tone.C6;
+	
 	public static final Tone Cb4 = new Tone(C, 4, -1);
 	public static final Tone middleC = new Tone(C, 4);
 	public static final Tone C4 = middleC;
@@ -56,10 +59,10 @@ public class Tone {
 	public static final Tone C5 = new Tone (C, 5);
 	public static final Tone C6 = new Tone(C, 6);
 	
-	private int key;
-	private int octave;
-	private int offset;
-	private int value;
+	private final int key;
+	private final int octave;
+	private final int offset;
+	private final int value;
 	
 	public Tone(int key, int octave) {
 		offset = 0;
@@ -132,6 +135,13 @@ public class Tone {
 		return new Tone(newKey, newOctave, newOffset);
 	}
 	
+	// First instance of the other note that comes above this tone (e.g. D5.nextInstanceOf(A8) -> A5)
+	public Tone nextInstanceOf(Tone other) {
+		Tone temp = new Tone(other.getKey(), octave, other.getOffset());
+		if(temp.lt(this)) temp = new Tone(other.getKey(), octave + 1, other.getOffset());
+		return temp;
+	}
+	
 	// Returns whether this Tone is lower than the other
 	public boolean lt(Tone other) {
 		return this.getValue() < other.getValue();
@@ -152,6 +162,11 @@ public class Tone {
 		return this.getValue() >= other.getValue();
 	}
 	
+	// Are the notes the same notes (i.e. some number of octaves apart but same note name)
+	public boolean sameNote(Tone other) {
+		return this.getKey() == other.getKey() && this.getOffset() == other.getOffset();
+	}
+	
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if(other == null) return false;
@@ -168,6 +183,60 @@ public class Tone {
 			str += Util.repeatChar('b', Math.abs(offset));
 		}
 		return str + octave;
+	}
+	
+	// Gets a Tone from a String (e.g. "C##5")
+	public static Tone fromString(String str) {
+		if(str == null || str.length() == 0)
+			throw new IllegalArgumentException("Cannot parse null/empty string into Tone");
+		char[] chars = str.toLowerCase().toCharArray();
+		int key = keyFromChar(chars[0]);
+		int offset = 0;
+		int i = 1;
+		
+		while(chars[i] == '#' || chars[i] == 'b') {
+			if(chars[i] == '#')
+				offset++;
+			else
+				offset--;
+			i++;
+		}
+		
+		while(chars[i] == ' ') i++;
+		
+		String octaveStr = str.substring(i);
+		int octave;
+		if(octaveStr.length() > 0)
+			try {
+				octave = Integer.parseInt(octaveStr);
+			}catch(NumberFormatException e) {
+				throw new IllegalArgumentException("Failed to parse string " + str + " (couldn't cast octave number)");
+			}
+		else
+			octave = -1; // ONLY USE IN SPECIFIC CASES
+		
+		return new Tone(key, octave, offset);
+	}
+	
+	// To key from lower case character c
+	private static int keyFromChar(char c) {
+		switch(c) {
+		case 'a':
+			return A;
+		case 'b':
+			return B;
+		case 'c':
+			return C;
+		case 'd':
+			return D;
+		case 'e':
+			return E;
+		case 'f':
+			return F;
+		case 'g':
+			return G;
+		}
+		return -1;
 	}
 	
 	public static void main(String[] args) {
