@@ -5,44 +5,52 @@ import java.util.stream.Collectors;
 
 public class Seventh implements Chord {
 
+	public static final int ROOT = 0;
+	public static final int FIRST = 1;
+	public static final int SECOND = 2;
+	public static final int THIRD = 3;
+	
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
 
-	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7);
-	public static final Seventh MAJ65 = new Seventh(Interval.m3, Interval.P5, Interval.m6);
-	public static final Seventh MAJ43 = new Seventh(Interval.M3, Interval.P4, Interval.M6);
-	public static final Seventh MAJ42 = new Seventh(Interval.m2, Interval.P4, Interval.m6);
+	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7, ROOT);
+	public static final Seventh MAJ65 = new Seventh(Interval.m3, Interval.P5, Interval.m6, FIRST);
+	public static final Seventh MAJ43 = new Seventh(Interval.M3, Interval.P4, Interval.M6, SECOND);
+	public static final Seventh MAJ42 = new Seventh(Interval.m2, Interval.P4, Interval.m6, THIRD);
 
-	public static final Seventh DOM7 = new Seventh(Interval.M3, Interval.P5, Interval.m7);
-	public static final Seventh DOM65 = new Seventh(Interval.m3, Interval.d5, Interval.m6);
-	public static final Seventh DOM43 = new Seventh(Interval.m3, Interval.P4, Interval.M6);
-	public static final Seventh DOM42 = new Seventh(Interval.M2, Interval.A4, Interval.M6);
+	public static final Seventh DOM7 = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT);
+	public static final Seventh DOM65 = new Seventh(Interval.m3, Interval.d5, Interval.m6, FIRST);
+	public static final Seventh DOM43 = new Seventh(Interval.m3, Interval.P4, Interval.M6, SECOND);
+	public static final Seventh DOM42 = new Seventh(Interval.M2, Interval.A4, Interval.M6, THIRD);
 
-	public static final Seventh MIN7 = new Seventh(Interval.m3, Interval.P5, Interval.m7);
-	public static final Seventh MIN65 = new Seventh(Interval.M3, Interval.P5, Interval.M6);
-	public static final Seventh MIN43 = new Seventh(Interval.m3, Interval.P4, Interval.m6);
-	public static final Seventh MIN42 = new Seventh(Interval.M2, Interval.P4, Interval.M6);
+	public static final Seventh MIN7 = new Seventh(Interval.m3, Interval.P5, Interval.m7, ROOT);
+	public static final Seventh MIN65 = new Seventh(Interval.M3, Interval.P5, Interval.M6, FIRST);
+	public static final Seventh MIN43 = new Seventh(Interval.m3, Interval.P4, Interval.m6, SECOND);
+	public static final Seventh MIN42 = new Seventh(Interval.M2, Interval.P4, Interval.M6, THIRD);
 
-	public static final Seventh HALFDIM7 = new Seventh(Interval.m3, Interval.d5, Interval.m7);
-	public static final Seventh HALFDIM65 = new Seventh(Interval.m3, Interval.P5, Interval.M6);
-	public static final Seventh HALFDIM43 = new Seventh(Interval.M3, Interval.A4, Interval.M6);
-	public static final Seventh HALFDIM42 = new Seventh(Interval.M2, Interval.P4, Interval.m6);
+	public static final Seventh HALFDIM7 = new Seventh(Interval.m3, Interval.d5, Interval.m7, ROOT);
+	public static final Seventh HALFDIM65 = new Seventh(Interval.m3, Interval.P5, Interval.M6, FIRST);
+	public static final Seventh HALFDIM43 = new Seventh(Interval.M3, Interval.A4, Interval.M6, SECOND);
+	public static final Seventh HALFDIM42 = new Seventh(Interval.M2, Interval.P4, Interval.m6, THIRD);
 
-	public static final Seventh DIM7 = new Seventh(Interval.m3, Interval.d5, Interval.d7);
-	public static final Seventh DIM65 = new Seventh(Interval.m3, Interval.d5, Interval.M6);
-	public static final Seventh DIM43 = new Seventh(Interval.m3, Interval.A4, Interval.M6);
-	public static final Seventh DIM42 = new Seventh(Interval.A2, Interval.A4, Interval.M6);
+	public static final Seventh DIM7 = new Seventh(Interval.m3, Interval.d5, Interval.d7, ROOT);
+	public static final Seventh DIM65 = new Seventh(Interval.m3, Interval.d5, Interval.M6, FIRST);
+	public static final Seventh DIM43 = new Seventh(Interval.m3, Interval.A4, Interval.M6, SECOND);
+	public static final Seventh DIM42 = new Seventh(Interval.A2, Interval.A4, Interval.M6, THIRD);
 	
 	Interval first;
 	Interval second;
 	Interval third;
+	int inversion;
 	
-	public Seventh(Interval first, Interval second, Interval third) {
+	public Seventh(Interval first, Interval second, Interval third, int inversion) {
 		if(first == null || second == null || third == null) throw new IllegalArgumentException("Intervals must be non-null values.");
 		if(first.lt(Interval.UNISON)) throw new IllegalArgumentException("First interval cannot be lower than a perfect unison.");
 		if(first.gt(second)) throw new IllegalArgumentException("Second interval cannot be lower than first interval.");
 		if(second.gt(third)) throw new IllegalArgumentException("Third interval cannot be lower than second interval.");
 		if(third.gt(Interval.OCTAVE)) throw new IllegalArgumentException("Third interval cannot exceed an octave.");
+		if(inversion != ROOT && inversion != FIRST && inversion != SECOND && inversion != THIRD) throw new IllegalArgumentException("Chord must be in root, first, second, or third inversion.");
 		
+		this.inversion = inversion;
 		this.first = first;
 		this.second = second;
 		this.third = third;
@@ -114,6 +122,20 @@ public class Seventh implements Chord {
 		tones.add(bass.up(second));
 		tones.add(bass.up(third));
 		return tones;
+	}
+	
+	@Override
+	public Interval rootToBass() {
+		if(inversion == ROOT) {
+			return Interval.UNISON;
+		}else if(inversion == FIRST) {
+			return Interval.OCTAVE.sub(third);
+		}else if(inversion == SECOND) {
+			return Interval.OCTAVE.sub(second);
+		}else if(inversion == THIRD) {
+			return Interval.OCTAVE.sub(first);
+		}
+		return null;
 	}
 	
 	public String toString() {

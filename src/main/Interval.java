@@ -222,6 +222,8 @@ public class Interval {
 			quality = AUG;
 			break;
 		case 'M':
+		case 'P':
+		case 'p':
 			quality = MAJPERF;
 			break;
 		case 'm':
@@ -236,7 +238,7 @@ public class Interval {
 		}
 		int i = 1;
 	
-		while(chars[i] == '-' || chars[i] == '+') {
+		while(chars.length > i && (chars[i] == '-' || chars[i] == '+')) {
 			if(chars[i] == '-')
 				quality--;
 			else

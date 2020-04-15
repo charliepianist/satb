@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 public class SATBGenerator {
 	private static final String[] files = new String[] {
-			"data/test1.txt"
+			"data/test1.txt",
+			"data/test2.txt"
 	};
 	
 	public static void main(String[] args) {
@@ -129,16 +130,18 @@ public class SATBGenerator {
 			String[] parts = next.split(":");
 			try {
 				if(parts.length < 2) throw new IllegalArgumentException("':' character missing to separate interval/tone and chord");
+				Chord currChord = chordFromStr(parts[1]);
+				chords.add(currChord);
+				
 				if(isTone) {
 					Tone temp = Tone.fromString(parts[0]);
+					temp = temp.up(currChord.rootToBass());
 					temp = tonic.nextInstanceOf(temp);
 					Interval i = Interval.intervalBetween(tonic, temp);
 					bassIntervals.add(i);
 				}else {
-					bassIntervals.add(Interval.normalize(Interval.fromString(parts[0])));
+					bassIntervals.add(Interval.normalize(Interval.fromString(parts[0]).add(currChord.rootToBass())));
 				}
-				Chord temp = chordFromStr(parts[1]);
-				chords.add(temp);
 			}catch(Exception e) {
 				System.err.println("Failed to parse line \"" + next + "\" into interval/tone and chord.");
 				e.printStackTrace();
@@ -149,8 +152,11 @@ public class SATBGenerator {
 		}
 		
 		System.out.println(tonic);
-		System.out.println(bassIntervals);
-		System.out.println(chords);
+//		System.out.println(bassIntervals);
+//		System.out.println(chords);
+		for(int i = 0; i < bassIntervals.size(); i++) {
+			System.out.println(chords.get(i).baseChord(tonic.up(bassIntervals.get(i))));
+		}
 
 	}
 }

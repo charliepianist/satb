@@ -16,4 +16,7 @@ public interface Chord {
 	
 	// One of each tone in the chord, in increasing order of pitch.
 	public Collection<Tone> baseChord(Tone bass);
+	
+	// Interval from root tone *up to* bass tone (*add* interval to get bass tone from root tone).
+	public Interval rootToBass();
 }

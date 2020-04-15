@@ -28,8 +28,11 @@ public class Tone {
 		};
 	}
 
+	public static final Tone MIN_TONE = new Tone(C, 0);
+	public static final Tone MAX_TONE = new Tone(C, 100);
+	
 	public static final Tone LOWEST_TONE = new Tone(E, 2);
-	public static final Tone HIGHEST_TONE = Tone.C6;
+	public static final Tone HIGHEST_TONE = new Tone(C, 6);
 	
 	public static final Tone Cb4 = new Tone(C, 4, -1);
 	public static final Tone middleC = new Tone(C, 4);
@@ -106,6 +109,11 @@ public class Tone {
 	public static int defaultValue(int key, int octave) {
 		if(key > B || key < C) throw new IllegalArgumentException("Key must be between " + C + " and " + B + ".");
 		return octave * Interval.OCTAVE_STEPS + keyOffsets[key];
+	}
+	
+	// Difference in values (same pitch -> 0, one tone -> 2, semitone -> 1, etc)
+	public int dist(Tone other) {
+		return Math.abs(other.getValue() - this.getValue());
 	}
 	
 	public Tone up(Interval interval) {
@@ -194,7 +202,7 @@ public class Tone {
 		int offset = 0;
 		int i = 1;
 		
-		while(chars[i] == '#' || chars[i] == 'b') {
+		while(chars.length > i && (chars[i] == '#' || chars[i] == 'b')) {
 			if(chars[i] == '#')
 				offset++;
 			else
@@ -202,7 +210,7 @@ public class Tone {
 			i++;
 		}
 		
-		while(chars[i] == ' ') i++;
+		while(chars.length > i && chars[i] == ' ') i++;
 		
 		String octaveStr = str.substring(i);
 		int octave;
@@ -237,6 +245,18 @@ public class Tone {
 			return G;
 		}
 		return -1;
+	}
+	
+	// Which tone is lower?
+	public static Tone min(Tone t1, Tone t2) {
+		if(t1.lt(t2)) return t1;
+		return t2;
+	}
+	
+	// Which tone is higher?
+	public static Tone max(Tone t1, Tone t2) {
+		if(t1.gt(t2)) return t1;
+		return t2;
 	}
 	
 	public static void main(String[] args) {

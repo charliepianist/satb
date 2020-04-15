@@ -4,41 +4,48 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Triad implements Chord {
+	
+	public static final int ROOT = 0;
+	public static final int FIRST = 1;
+	public static final int SECOND = 2;
 
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
 
-	public static final Triad AUG = new Triad(Interval.M3, Interval.A5);
+	public static final Triad AUG = new Triad(Interval.M3, Interval.A5, ROOT);
 	public static final Triad AUG53 = AUG;
-	public static final Triad AUG6 = new Triad(Interval.M3, Interval.m6);
+	public static final Triad AUG6 = new Triad(Interval.M3, Interval.m6, FIRST);
 	public static final Triad AUG63 = AUG6;
-	public static final Triad AUG64 = new Triad(Interval.d4, Interval.m6);
+	public static final Triad AUG64 = new Triad(Interval.d4, Interval.m6, SECOND);
 
-	public static final Triad MAJ = new Triad(Interval.M3, Interval.P5);
+	public static final Triad MAJ = new Triad(Interval.M3, Interval.P5, ROOT);
 	public static final Triad MAJ53 = MAJ;
-	public static final Triad MAJ6 = new Triad(Interval.m3, Interval.m6);
+	public static final Triad MAJ6 = new Triad(Interval.m3, Interval.m6, FIRST);
 	public static final Triad MAJ63 = MAJ6;
-	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6);
+	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6, SECOND);
 	
-	public static final Triad MIN = new Triad(Interval.m3, Interval.P5);
+	public static final Triad MIN = new Triad(Interval.m3, Interval.P5, ROOT);
 	public static final Triad MIN53 = MIN;
-	public static final Triad MIN6 = new Triad(Interval.M3, Interval.M6);
+	public static final Triad MIN6 = new Triad(Interval.M3, Interval.M6, FIRST);
 	public static final Triad MIN63 = MIN6;
-	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6);
+	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6, SECOND);
 	
-	public static final Triad DIM = new Triad(Interval.m3, Interval.d5);
+	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT);
 	public static final Triad DIM53 = DIM;
-	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6);
+	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6, FIRST);
 	public static final Triad DIM63 = DIM6;
-	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6);
+	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6, SECOND);
 	
 	Interval middle;
 	Interval top;
+	int inversion;
 	
-	public Triad(Interval middle, Interval top) {
+	public Triad(Interval middle, Interval top, int inversion) {
 		if(middle == null || top == null) throw new IllegalArgumentException("Middle and Top must be non-null values.");
 		if(middle.lt(Interval.UNISON)) throw new IllegalArgumentException("Middle cannot be lower than a perfect unison.");
 		if(middle.gt(top)) throw new IllegalArgumentException("Top interval cannot be lower than middle interval.");
 		if(top.gt(Interval.OCTAVE)) throw new IllegalArgumentException("Top interval cannot exceed a perfect octave.");
+		if(inversion != ROOT && inversion != FIRST && inversion != SECOND) throw new IllegalArgumentException("Chord must be in root, first, or second inversion.");
+		this.inversion = inversion;
 		this.middle = middle;
 		this.top = top;
 	}
@@ -102,6 +109,18 @@ public class Triad implements Chord {
 		tones.add(bass.up(middle));
 		tones.add(bass.up(top));
 		return tones;
+	}
+
+	@Override
+	public Interval rootToBass() {
+		if(inversion == ROOT) {
+			return Interval.UNISON;
+		}else if(inversion == FIRST) {
+			return Interval.OCTAVE.sub(top);
+		}else if(inversion == SECOND) {
+			return Interval.OCTAVE.sub(middle);
+		}
+		return null;
 	}
 	
 	public String toString() {

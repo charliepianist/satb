@@ -1,5 +1,5 @@
 D# 4
 tones
-C#
-E#
-Fbb
+C#:maj
+E#:aug63
+Fbb:dom7

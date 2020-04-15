@@ -1,5 +1,7 @@
 C# 4
 intervals
-m2:maj63
-M3:maj
-A++15:min65
+P1:maj
+P4:maj
+P1:maj64
+P5:maj
+P1:maj
