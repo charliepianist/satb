@@ -9,8 +9,8 @@ import com.charliepianist.out.PatternOutput;
 
 public class SATB {
 	private static final String[] ioNames = new String[] {
-			"data/test1.txt",
-			"out/test1.midi"
+			"data/interval_example.txt",
+			"out/out.midi"
 	};
 	
 	public static Chord chordFromStr(String str) throws Exception {
@@ -109,7 +109,7 @@ public class SATB {
 		String output = "";
 		for(int i = 0; i < voices.length; i++) {
 			for(Tone t : voices[i].getLine()) {
-				output += t + " ";
+				output += String.format("%1$-6s", t.toString());
 			}
 			if(i < voices.length - 1) output += "\n";
 		}
@@ -119,9 +119,22 @@ public class SATB {
 	private static void processFile(BufferedReader reader) throws IOException, Exception {
 		String keyStr = reader.readLine();
 		String isToneStr = reader.readLine();
+		String entropyStr = reader.readLine();
 		Tone tonic = Tone.fromString(keyStr);
 		tonic = Tone.LOWEST_TONE.nextInstanceOf(tonic);
 		boolean isTone = isToneStr.toLowerCase().equals("tones");
+		int entropy = SATBGenerator.ENTROPY_START;
+		switch(entropyStr.substring(entropyStr.indexOf(':') + 1).replace(" ", "").toLowerCase()) {
+		case "all":
+			entropy = SATBGenerator.ENTROPY_ALL;
+			break;
+		case "start":
+			entropy = SATBGenerator.ENTROPY_START;
+			break;
+		case "none":
+			entropy = SATBGenerator.ENTROPY_NONE;
+			break;
+		}
 		
 		ArrayList<Interval> bassIntervals = new ArrayList<Interval>();
 		ArrayList<Chord> chords = new ArrayList<Chord>();
@@ -155,7 +168,7 @@ public class SATB {
 		}
 		
 		SATBGenerator generator = new SATBGenerator();
-		Voice[] satb = generator.generateSATB(tonic, bassIntervals, chords);
+		Voice[] satb = generator.generateSATB(tonic, bassIntervals, chords, entropy);
 		output(satb, false);
 	}
 	
@@ -164,9 +177,13 @@ public class SATB {
 			System.out.println("Failed to generate SATB for given file (could not find voicing that follows SATB rules).");
 		}else {
 			System.out.println(satbToString(satb));
-			if(play) PatternOutput.playSATB(satb);
+			if(play) {
+				PatternOutput.playSATB(satb);
+				System.out.println("Playing.");
+			}
 			try {
 				PatternOutput.saveSATB(satb, ioNames[1]);
+				System.out.println("Saved to MIDI at '" + ioNames[1] + "'");
 			}catch(IOException e) {
 				e.printStackTrace();
 			}

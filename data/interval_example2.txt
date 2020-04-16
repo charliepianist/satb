@@ -1,0 +1,6 @@
+C
+intervals
+entropy: none
+P1:maj
+A++3:dom7
+d--3:maj

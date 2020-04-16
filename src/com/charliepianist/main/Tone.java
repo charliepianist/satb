@@ -72,11 +72,20 @@ public class Tone {
 	private final int offset;
 	private final int value;
 	
-	public Tone(int key, int octave) {
-		offset = 0;
+	public Tone(int value) {
+		int octave = value / Interval.OCTAVE_STEPS;
+		int remainder = value % Interval.OCTAVE_STEPS;
+		int key = Arrays.binarySearch(keyOffsets, remainder);
+		if(key < 0) key = -key - 2;
+		
 		this.key = key;
 		this.octave = octave;
-		value = defaultValue(key, octave);
+		this.offset = value - defaultValue(key, octave);
+		this.value = value;
+	}
+	
+	public Tone(int key, int octave) {
+		this(key, octave, 0);
 	}
 	
 	public Tone(int key, int octave, int offset) {
@@ -163,12 +172,7 @@ public class Tone {
 	// If tone has more than one sharp or more than one flat, get the closest note beneath or equal to the actual tone such that there is only one
 	// sharp or none.
 	public static Tone normalize(Tone t) {
-		int octave = t.value / Interval.OCTAVE_STEPS;
-		int remainder = t.value % Interval.OCTAVE_STEPS;
-		int key = Arrays.binarySearch(keyOffsets, remainder);
-		if(key < 0) key = -key - 2;
-		
-		return new Tone(key, octave, t.value - defaultValue(key, octave));
+		return new Tone(t.value);
 	}
 	
 	// This pitch at all octaves from lowest tone to highest tone
@@ -306,23 +310,37 @@ public class Tone {
 		return t2;
 	}
 	
+	// Halfway between the two tones (rounded up)
+	public static Tone avg(Tone t1, Tone t2) {
+		return new Tone((t1.value + t2.value + 1) / 2);
+	}
+	
 	public static Comparator<Tone> byDistanceTo(Tone t) {
-		return new ToneDistanceComparator(t);
+		return new ToneDistanceComparator(t, 0);
+	}
+	
+	public static Comparator<Tone> byDistanceTo(Tone t, int idealDist) {
+		return new ToneDistanceComparator(t, idealDist);
 	}
 	
 	private static class ToneDistanceComparator implements Comparator<Tone> {
 
 		private Tone ref;
+		private int idealDist;
 		
-		public ToneDistanceComparator(Tone ref) {
+		public ToneDistanceComparator(Tone ref, int idealDist) {
 			this.ref = ref;
+			this.idealDist = idealDist;
 		}
 		
 		@Override
 		public int compare(Tone o1, Tone o2) {
-			return o1.dist(ref) - o2.dist(ref);
+			return distanceFromIdeal(o1) - distanceFromIdeal(o2);
 		}
 		
+		private int distanceFromIdeal(Tone t) {
+			return Math.abs(t.dist(ref) - idealDist);
+		}
 	}
 	
 	public static void main(String[] args) {

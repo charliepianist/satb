@@ -1,9 +1,11 @@
 package com.charliepianist.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.charliepianist.main.Interval.SignedInterval;
 import com.charliepianist.main.Util.Range;
 
 public class Seventh implements Chord {
@@ -20,10 +22,30 @@ public class Seventh implements Chord {
 	public static final Seventh MAJ43 = new Seventh(Interval.M3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MAJ42 = new Seventh(Interval.m2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R11, Range.R12, Range.R12, Range.R01 });
 
-	public static final Seventh DOM7 = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 });
-	public static final Seventh DOM65 = new Seventh(Interval.m3, Interval.d5, Interval.m6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 });
-	public static final Seventh DOM43 = new Seventh(Interval.m3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
-	public static final Seventh DOM42 = new Seventh(Interval.M2, Interval.A4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R12, Range.R11, Range.R01 });
+	public static final Seventh DOM7 = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 }, new SignedInterval[][] {
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) }
+	});
+	public static final Seventh DOM65 = new Seventh(Interval.m3, Interval.d5, Interval.m6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		null
+	});
+	public static final Seventh DOM43 = new Seventh(Interval.m3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) }
+	});
+	public static final Seventh DOM42 = new Seventh(Interval.M2, Interval.A4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R12, Range.R11, Range.R01 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null
+	});
 
 	public static final Seventh MIN7 = new Seventh(Interval.m3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 });
 	public static final Seventh MIN65 = new Seventh(Interval.M3, Interval.P5, Interval.M6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 });
@@ -46,9 +68,14 @@ public class Seventh implements Chord {
 	private int inversion;
 	private Range[] allowedAmount;
 	private int df;
+	private SignedInterval[][] requiredNext;
+	
+	public Seventh(Interval first, Interval second, Interval third, int inversion, Range[] allowedAmount) {
+		this(first, second, third, inversion, allowedAmount, null);
+	}
 	
 	// Intervals in increasing order, the inversion of the chord, and how many of each tone is allowed
-	public Seventh(Interval first, Interval second, Interval third, int inversion, Range[] allowedAmount) {
+	public Seventh(Interval first, Interval second, Interval third, int inversion, Range[] allowedAmount, SignedInterval[][] requiredNext) {
 		if(first == null || second == null || third == null) throw new IllegalArgumentException("Intervals must be non-null values.");
 		if(first.lt(Interval.UNISON)) throw new IllegalArgumentException("First interval cannot be lower than a perfect unison.");
 		if(first.gt(second)) throw new IllegalArgumentException("Second interval cannot be lower than first interval.");
@@ -62,6 +89,7 @@ public class Seventh implements Chord {
 		this.second = second;
 		this.third = third;
 		this.allowedAmount = allowedAmount;
+		this.requiredNext = requiredNext;
 		
 		df = 4 - allowedAmount[0].getMin() - allowedAmount[1].getMin() - allowedAmount[2].getMin() - allowedAmount[3].getMin();
 	}
@@ -169,6 +197,31 @@ public class Seventh implements Chord {
 		}
 		if(cumulativedf > df) return false;
 		return true;
+	}
+	
+	@Override
+	public Tone[] allowedNext(Tone bass, Tone curr) {
+		if(requiredNext == null) return null;
+		Interval interval = bass.intervalTo(curr).normalize();
+		
+		if(interval.enharmonic(Interval.UNISON)) {
+			if(requiredNext[0] == null) return null;
+			return Arrays.asList(requiredNext[0]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);	
+		}
+		if(interval.enharmonic(first)) {
+			if(requiredNext[1] == null) return null;
+			return Arrays.asList(requiredNext[1]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);		
+		}
+		if(interval.enharmonic(second)) {
+			if(requiredNext[2] == null) return null;
+			return Arrays.asList(requiredNext[2]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);	
+		}
+		if(interval.enharmonic(third)) {
+			if(requiredNext[3] == null) return null;
+			return Arrays.asList(requiredNext[3]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);	
+		}
+		
+		return null;
 	}
 	
 	public String toString() {

@@ -21,6 +21,11 @@ public interface Chord {
 	// Interval from root tone *up to* bass tone (*add* interval to get bass tone from root tone).
 	public Interval rootToBass();
 	
-	// Is the current list of tones allowed?
+	// Is it possible to form a chord that satisfies the requirements of the chord
+	// (Checking keys only, not octaves)
 	public boolean hasPotential(Tone bass, List<Tone> tones);
+	
+	// Return a Tone if curr must be followed by another tone (or list of tones), or return null if there is no
+	// requirement.
+	public Tone[] allowedNext(Tone bass, Tone curr);
 }

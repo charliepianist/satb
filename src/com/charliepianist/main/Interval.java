@@ -174,6 +174,10 @@ public class Interval {
 		return this.getOffset() >= other.getOffset();
 	}
 	
+	public Interval normalize() {
+		return Interval.normalize(this);
+	}
+	
 	// Brings interval down to (strictly) less than an octave
 	public static Interval normalize(Interval i) {
 		while(i.geq(Interval.OCTAVE)) {
@@ -290,6 +294,27 @@ public class Interval {
 	// Do these intervals *sound* the same?
 	public static boolean enharmonic(Interval i1, Interval i2) {
 		return i1.offset == i2.offset;
+	}
+	
+	public static class SignedInterval {
+		private Interval interval;
+		private boolean up;
+		
+		public static SignedInterval UNISON = new SignedInterval(Interval.UNISON);
+		
+		public SignedInterval(Interval i) {
+			this(i, true);
+		}
+		
+		public SignedInterval(Interval i, boolean u) {
+			interval = i;
+			up = u;
+		}
+		
+		public Tone addTo(Tone t) {
+			if(up) return t.up(interval);
+			return t.down(interval);
+		}
 	}
 	
 	// Basic testing module

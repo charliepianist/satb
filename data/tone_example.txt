@@ -1,0 +1,10 @@
+B
+tones
+entropy: default
+B:maj
+F#:maj64
+B:maj6
+C#:min65
+B:maj64
+F#:maj
+B:maj

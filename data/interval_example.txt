@@ -1,5 +1,6 @@
-C 4
+C
 intervals
+entropy: default
 P1:min
 P5:dom43
 P1:min6

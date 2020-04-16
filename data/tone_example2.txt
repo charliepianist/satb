@@ -1,0 +1,6 @@
+B#
+tones
+entropy: all
+B#:maj
+F##:dom7
+Ebbbb:maj

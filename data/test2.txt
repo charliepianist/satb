@@ -1,9 +1,0 @@
-B 4
-intervals
-P1:maj
-P5:maj64
-P1:maj6
-P2:min65
-P1:maj64
-P5:maj
-P1:maj

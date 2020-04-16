@@ -1,9 +1,11 @@
 package com.charliepianist.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.charliepianist.main.Interval.SignedInterval;
 import com.charliepianist.main.Util.Range;
 
 public class Triad implements Chord {
@@ -34,19 +36,36 @@ public class Triad implements Chord {
 	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
 	public static final Triad MIN_TRIP_ROOT = new Triad(Interval.m3, Interval.P5, ROOT, new Range[] { Range.R13, Range.R11, Range.R02 });
 	
-	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT, new Range[] { Range.R12, Range.R11, Range.R12 });
+	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT, new Range[] { Range.R11, Range.R12, Range.R11 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) }
+	});
 	public static final Triad DIM53 = DIM;
-	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 });
+	public static final Triad DIM6 = new Triad(Interval.m3, Interval.M6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 }, new SignedInterval[][] {
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) }
+	});
 	public static final Triad DIM63 = DIM6;
-	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
+	public static final Triad DIM64 = new Triad(Interval.A4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null
+	});
 	
 	private Interval middle;
 	private Interval top;
 	private int inversion;
 	private Range[] allowedAmount;
 	private int df;
+	private SignedInterval[][] requiredNext;
 	
 	public Triad(Interval middle, Interval top, int inversion, Range[] allowedAmount) {
+		this(middle, top, inversion, allowedAmount, null);
+	}
+	
+	public Triad(Interval middle, Interval top, int inversion, Range[] allowedAmount, SignedInterval[][] requiredNext) {
 		if(middle == null || top == null) throw new IllegalArgumentException("Middle and Top must be non-null values.");
 		if(middle.lt(Interval.UNISON)) throw new IllegalArgumentException("Middle cannot be lower than a perfect unison.");
 		if(middle.gt(top)) throw new IllegalArgumentException("Top interval cannot be lower than middle interval.");
@@ -58,6 +77,7 @@ public class Triad implements Chord {
 		this.top = top;
 		this.allowedAmount = allowedAmount;
 		df = 4 - allowedAmount[0].getMin() - allowedAmount[1].getMin() - allowedAmount[2].getMin();
+		this.requiredNext = requiredNext;
 	}
 	
 	public Triad loosenTo(Range[] newAllowedAmount) {
@@ -158,6 +178,27 @@ public class Triad implements Chord {
 		}
 		if(cumulativedf > df) return false;
 		return true;
+	}
+	
+	@Override
+	public Tone[] allowedNext(Tone bass, Tone curr) {
+		if(requiredNext == null) return null;
+		Interval interval = bass.intervalTo(curr).normalize();
+		
+		if(interval.enharmonic(Interval.UNISON)) {
+			if(requiredNext[0] == null) return null;
+			return Arrays.asList(requiredNext[0]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);	
+		}
+		if(interval.enharmonic(middle)) {
+			if(requiredNext[1] == null) return null;
+			return Arrays.asList(requiredNext[1]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);		
+		}
+		if(interval.enharmonic(top)) {
+			if(requiredNext[2] == null) return null;
+			return Arrays.asList(requiredNext[2]).stream().map(i -> i.addTo(curr)).collect(Collectors.toList()).toArray(new Tone[0]);	
+		}
+		
+		return null;
 	}
 	
 	public String toString() {

@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 public class Voice {
 	ArrayList<Tone> tones;
 	Tone top, bottom; // Edges of range
+
+	public static int ENTROPY_NONE = 0;
+	public static int ENTROPY_START = 1;
+	public static int ENTROPY_ALL = 2;
 	
 	public Voice(Tone top, Tone bottom) {
 		this(new ArrayList<Tone>(), top, bottom);
@@ -41,22 +45,22 @@ public class Voice {
 	}
 	
 	public Collection<Tone> filterInRange(Collection<Tone> options) {
-		return filterInRange(options, true, true);
+		return filterInRange(options, ENTROPY_NONE);
 	}
 	
-	public Collection<Tone> filterInRange(Collection<Tone> options, boolean withinOctave) {
-		return filterInRange(options, withinOctave, true);
+	public Collection<Tone> filterInRange(Collection<Tone> options, int entropy) {
+		return filterInRange(options, entropy, true);
 	}
 	
 	// Just filter options for notes that are in this voice's range, and within an octave of previous note, if applicable
 	// Specifically can be useful for Bass with looser voice leading requirements
-	public Collection<Tone> filterInRange(Collection<Tone> options, boolean withinOctave, boolean shuffle) {
+	public Collection<Tone> filterInRange(Collection<Tone> options, int entropy, boolean withinOctave) {
 		List<Tone> tones = options.stream().filter(t -> t.geq(bottom) && t.leq(top)).collect(Collectors.toList());
 		if(withinOctave && this.tones.size() >= 1) {
 			Tone lastTone = this.tones.get(this.tones.size() - 1);
 			tones = tones.stream().filter(t -> t.leq(lastTone.up(Interval.OCTAVE)) && t.geq(lastTone.down(Interval.OCTAVE))).collect(Collectors.toList());
 		}
-		if(shuffle) Collections.shuffle(tones);
+		if(entropy >= ENTROPY_ALL || (entropy >= ENTROPY_START && this.isEmpty())) Collections.shuffle(tones);
 		return tones;
 	}
 	
@@ -67,23 +71,29 @@ public class Voice {
 	}
 	
 	public Collection<Tone> validMoves(Collection<Tone> options, Tone min, Tone max) {
-		return validMoves(options, min, max, true);
+		return validMoves(options, min, max, ENTROPY_NONE);
 	}
 	
 	// Possible moves among list of Tones tones, with restrictions from other voices min, max
-	public Collection<Tone> validMoves(Collection<Tone> options, Tone min, Tone max, boolean sort) {
+	// Entropy refers to shuffling
+	// Sort refers to whether to sort or leave in order from lowest to highest
+	public Collection<Tone> validMoves(Collection<Tone> options, Tone min, Tone max, int entropy) {
+		int STEP = 2;
+		int SMALL_LEAP = 4;
+		
 		Tone origMin = min;
+		Tone origMax = max;
 		ArrayList<Tone> moves = new ArrayList<Tone>();
 		min = Tone.max(min, bottom);
 		max = Tone.min(max, top);
 		int len = tones.size();
 		
 		if(len > 1) {
-			Tone last = tones.get(len - 1);
-			Tone secondLast = tones.get(len - 2);
+			Tone last = this.tones.get(len - 1);
+			Tone secondLast = this.tones.get(len - 2);
 			int dist = secondLast.dist(last);
-			if(dist > 2) {
-				if(dist > 4) {
+			if(dist > STEP) {
+				if(dist > SMALL_LEAP) {
 					// Greater than a 3rd
 					if(secondLast.gt(last)) {
 						// Previous leap was downwards
@@ -108,13 +118,18 @@ public class Voice {
 		}
 		
 		boolean allowOrigMin = false;
+		boolean allowOrigMax = false;
 		if(len > 0) {
-			Tone last = tones.get(len - 1);
+			Tone last = this.tones.get(len - 1);
 			for(Tone option : options) {
 				if(option.geq(min) && option.leq(max)) {
 					if(Interval.intervalBetween(option, last).leq(Interval.OCTAVE)) {
 						if(option.enharmonic(origMin)) {
 							allowOrigMin = true;
+							continue;
+						}
+						if(option.enharmonic(origMax)) {
+							allowOrigMax = true;
 							continue;
 						}
 						moves.add(option);
@@ -128,15 +143,47 @@ public class Voice {
 						allowOrigMin = true;
 						continue;
 					}
+					if(option.enharmonic(origMax)) {
+						allowOrigMax = true;
+						continue;
+					}
 					moves.add(option);
 				}
 			}
 		}
 		
-		if(sort && !this.isEmpty()) {
-			Collections.sort(moves, Tone.byDistanceTo(this.last()));
+		// Sort by ideal distance given consecutive steps leading up to this point
+		if(entropy < ENTROPY_ALL) {
+			if(!this.isEmpty()) {
+				int consecutiveSteps = 0;
+				for(int i = this.tones.size() - 2; i >= 0; i--) {
+					if(tones.get(i).dist(tones.get(i + 1)) <= STEP) {
+						consecutiveSteps++;
+					}
+				}
+				int idealDist = idealInterval(consecutiveSteps);
+				Collections.sort(moves, Tone.byDistanceTo(this.last(), idealDist));
+			}else {
+				if(entropy < ENTROPY_START) {
+					Collections.sort(moves, Tone.byDistanceTo(Tone.avg(bottom, top), 0)); 
+				}else Collections.shuffle(moves);
+			}
 		}else Collections.shuffle(moves);
-		if(allowOrigMin) moves.add(origMin);
+		
+		// We want to avoid adding the minimum/maximums given to us if possible (i.e. check those last)
+		if(allowOrigMin && allowOrigMax) {
+			int i = (int) (Math.random() * 2);
+			if(i == 0) {
+				moves.add(origMin);
+				moves.add(origMax);
+			}else {
+				moves.add(origMax);
+				moves.add(origMin);
+			}
+		}else {
+			if(allowOrigMin) moves.add(origMin);
+			if(allowOrigMax) moves.add(origMax);
+		}
 		return moves;
 	}
 	
@@ -151,6 +198,19 @@ public class Voice {
 			}
 		}
 		return false;
+	}
+	
+	// What is the ideal distance to move given some number of consecutive steps?
+	public static int idealInterval(int consecutiveSteps) {
+		if(consecutiveSteps < 2) {
+			return 0;
+		}else if(consecutiveSteps < 4) {
+			return 2;
+		}else if(consecutiveSteps == 4) {
+			return 3;
+		}else {
+			return 4;
+		}
 	}
 	
 	public static void main(String[] args) {
