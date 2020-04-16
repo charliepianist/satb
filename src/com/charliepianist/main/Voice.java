@@ -1,4 +1,4 @@
-package main;
+package com.charliepianist.main;
 
 import java.util.ArrayList;
 import java.util.Collection;

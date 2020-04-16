@@ -1,4 +1,4 @@
-package main;
+package com.charliepianist.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +28,9 @@ public class SATBGenerator {
 		if(bassIntervals.size() == 0 || chords.size() == 0) throw new IllegalArgumentException("bassIntervals and chords cannot be empty.");
 		tonic = Tone.LOWEST_TONE.nextInstanceOf(tonic);
 		
-		if(generate(tonic, bassIntervals, chords, 0)) {
+		if(generate(tonic, bassIntervals, chords, 0, true)) {
+			return new Voice[] { s, a, t, b };
+		}else if(generate(tonic, bassIntervals, chords, 0, false)){
 			return new Voice[] { s, a, t, b };
 		}
 		return null;
@@ -36,7 +38,7 @@ public class SATBGenerator {
 	
 	// Todo: Tritone resolution?
 	// True indicates success
-	private boolean generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index) {
+	private boolean generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index, boolean strictSoprano) {
 		Tone root = BASS_BOTTOM.nextInstanceOf(tonic.up(bassIntervals.get(index)));
 		Chord chord = chords.get(index);
 		Collection<Tone> tones = chord.tones(root);
@@ -71,8 +73,10 @@ public class SATBGenerator {
 						continue;
 					}
 					
-					
-					for(Tone sopranoTone : s.validMoves(tones, altoTone, altoTone.up(Interval.OCTAVE))) {
+					Collection<Tone> sopranoOptions = strictSoprano && index < 3 && index > 0 ? 
+							s.validMoves(tones, Tone.max(altoTone, s.last().down(Interval.M2)), Tone.min(altoTone.up(Interval.OCTAVE), s.last().up(Interval.M2))) :
+							s.validMoves(tones, altoTone, altoTone.up(Interval.OCTAVE));
+					for(Tone sopranoTone : sopranoOptions) {
 						// Check for parallel intervals
 						if(Voice.parallelPerfectIntervals(b, s, bassTone, sopranoTone)
 								|| Voice.parallelPerfectIntervals(t, s, tenorTone, sopranoTone)
@@ -95,7 +99,7 @@ public class SATBGenerator {
 							return true;
 						}
 						// Attempt to build off of this combination of tones
-						if(generate(tonic, bassIntervals, chords, index + 1)) {
+						if(generate(tonic, bassIntervals, chords, index + 1, strictSoprano)) {
 							return true;
 						}
 						s.pop();

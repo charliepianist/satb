@@ -1,6 +1,7 @@
-package main;
+package com.charliepianist.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -155,6 +156,21 @@ public class Tone {
 		return temp;
 	}
 	
+	public Tone normalize() {
+		return Tone.normalize(this);
+	}
+	
+	// If tone has more than one sharp or more than one flat, get the closest note beneath or equal to the actual tone such that there is only one
+	// sharp or none.
+	public static Tone normalize(Tone t) {
+		int octave = t.value / Interval.OCTAVE_STEPS;
+		int remainder = t.value % Interval.OCTAVE_STEPS;
+		int key = Arrays.binarySearch(keyOffsets, remainder);
+		if(key < 0) key = -key - 2;
+		
+		return new Tone(key, octave, t.value - defaultValue(key, octave));
+	}
+	
 	// This pitch at all octaves from lowest tone to highest tone
 	public List<Tone> allInstances() {
 		ArrayList<Tone> tones = new ArrayList<Tone>();
@@ -211,13 +227,17 @@ public class Tone {
 	}
 	
 	public String toString() {
+		return this.toString(0);
+	}
+	
+	public String toString(int addToOctave) {
 		String str = keyNames[key];
 		if(offset > 0) {
 			str += Util.repeatChar('#', offset);
 		}else if(offset < 0) {
 			str += Util.repeatChar('b', Math.abs(offset));
 		}
-		return str + octave;
+		return str + (octave + addToOctave);
 	}
 	
 	// Gets a Tone from a String (e.g. "C##5")
@@ -319,5 +339,7 @@ public class Tone {
 		System.out.print(t2.down(Interval.A2).down(Interval.m3) + " ");
 		System.out.print(t2.down(Interval.A2).down(Interval.m3).down(Interval.m3) + " ");
 		System.out.println(t2.down(Interval.A2).down(Interval.m3).down(Interval.m3).down(Interval.m3));
+		System.out.println("=======================");
+		System.out.println(Tone.normalize(new Tone(Tone.F, 5, -14)));
 	}
 }

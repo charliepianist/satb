@@ -1,4 +1,4 @@
-package main;
+package com.charliepianist.main;
 
 public class Interval {
 	public static final int AUG = 1;

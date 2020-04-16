@@ -1,10 +1,10 @@
-package main;
+package com.charliepianist.main;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import main.Util.Range;
+import com.charliepianist.main.Util.Range;
 
 public class Seventh implements Chord {
 

@@ -1,9 +1,11 @@
-package main;
+package com.charliepianist.main;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.charliepianist.out.PatternOutput;
 
 public class SATB {
 	private static final String[] files = new String[] {
@@ -154,8 +156,12 @@ public class SATB {
 		
 		SATBGenerator generator = new SATBGenerator();
 		Voice[] satb = generator.generateSATB(tonic, bassIntervals, chords);
-		
+		output(satb);
+	}
+	
+	private static void output(Voice[] satb) {
 		System.out.println(satbToString(satb));
+		PatternOutput.playSATB(satb);
 	}
 	
 	public static void main(String[] args) {
