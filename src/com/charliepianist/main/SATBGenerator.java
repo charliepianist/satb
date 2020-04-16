@@ -73,7 +73,9 @@ public class SATBGenerator {
 						continue;
 					}
 					
-					Collection<Tone> sopranoOptions = strictSoprano && index < 3 && index > 0 ? 
+					// Figure out soprano options based on whether we strictly restrict soprano
+					// First 3 step-wise and last one step-wise (or same note)
+					Collection<Tone> sopranoOptions = strictSoprano && ((index < 3 && index > 0) || index == numChords - 1) ? 
 							s.validMoves(tones, Tone.max(altoTone, s.last().down(Interval.M2)), Tone.min(altoTone.up(Interval.OCTAVE), s.last().up(Interval.M2))) :
 							s.validMoves(tones, altoTone, altoTone.up(Interval.OCTAVE));
 					for(Tone sopranoTone : sopranoOptions) {

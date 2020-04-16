@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import com.charliepianist.out.PatternOutput;
 
 public class SATB {
-	private static final String[] files = new String[] {
+	private static final String[] ioNames = new String[] {
 			"data/test1.txt",
-			//"data/test2.txt"
+			"out/test1.midi"
 	};
 	
 	public static Chord chordFromStr(String str) throws Exception {
@@ -156,27 +156,31 @@ public class SATB {
 		
 		SATBGenerator generator = new SATBGenerator();
 		Voice[] satb = generator.generateSATB(tonic, bassIntervals, chords);
-		output(satb);
+		output(satb, false);
 	}
 	
-	private static void output(Voice[] satb) {
+	private static void output(Voice[] satb, boolean play) {
 		if(satb == null) {
-			System.out.println("Failed to generate SATB for given files (could not find voicing that follows SATB rules).");
+			System.out.println("Failed to generate SATB for given file (could not find voicing that follows SATB rules).");
 		}else {
 			System.out.println(satbToString(satb));
-			PatternOutput.playSATB(satb);
+			if(play) PatternOutput.playSATB(satb);
+			try {
+				PatternOutput.saveSATB(satb, ioNames[1]);
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	public static void main(String[] args) {
 		BufferedReader reader;
-		for(String filepath : files) {
-			try {
-				reader = new BufferedReader(new FileReader(filepath));
-				processFile(reader);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+		String filepath = ioNames[0];
+		try {
+			reader = new BufferedReader(new FileReader(filepath));
+			processFile(reader);
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 }
