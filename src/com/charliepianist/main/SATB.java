@@ -160,8 +160,12 @@ public class SATB {
 	}
 	
 	private static void output(Voice[] satb) {
-		System.out.println(satbToString(satb));
-		PatternOutput.playSATB(satb);
+		if(satb == null) {
+			System.out.println("Failed to generate SATB for given files (could not find voicing that follows SATB rules).");
+		}else {
+			System.out.println(satbToString(satb));
+			PatternOutput.playSATB(satb);
+		}
 	}
 	
 	public static void main(String[] args) {
