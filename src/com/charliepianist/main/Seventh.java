@@ -52,7 +52,7 @@ public class Seventh implements Chord {
 	public static final Seventh MIN43 = new Seventh(Interval.m3, Interval.P4, Interval.m6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MIN42 = new Seventh(Interval.M2, Interval.P4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R12, Range.R11, Range.R01 });
 
-	public static final Seventh HALFDIM7 = new Seventh(Interval.m3, Interval.d5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R01, Range.R11, Range.R11 });
+	public static final Seventh HALFDIM7 = new Seventh(Interval.m3, Interval.d5, Interval.m7, ROOT, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh HALFDIM65 = new Seventh(Interval.m3, Interval.P5, Interval.M6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh HALFDIM43 = new Seventh(Interval.M3, Interval.A4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R11, Range.R12, Range.R01 });
 	public static final Seventh HALFDIM42 = new Seventh(Interval.M2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R12, Range.R12, Range.R01, Range.R12 });

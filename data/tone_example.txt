@@ -2,9 +2,9 @@ B
 tones
 entropy: default
 B:maj
-F#:maj64
+F#:dom64
 B:maj6
 C#:min65
 B:maj64
-F#:maj
+F#:dom
 B:maj

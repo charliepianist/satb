@@ -18,14 +18,25 @@ public class SATB {
 		switch(str) {
 		// MAJOR TRIADS
 		case "maj":
+		case "maj53":
 			return Triad.MAJ;
 		case "maj6":
 		case "maj63":
 			return Triad.MAJ63;
 		case "maj64":
 			return Triad.MAJ64;
+		// DOMINANT TRIADS (Note: the only difference between this and major is that the 3rd MUST either remain unchanged OR resolve to a 4th.
+		case "dom":
+		case "dom53":
+			return Triad.DOM;
+		case "dom6":
+		case "dom63":
+			return Triad.DOM6;
+		case "dom64":
+			return Triad.DOM64;
 		// MINOR TRIADS
 		case "min":
+		case "min53":
 			return Triad.MIN;
 		case "min6":
 		case "min63":
@@ -34,6 +45,7 @@ public class SATB {
 			return Triad.MIN64;
 		// AUGMENTED TRIADS
 		case "aug":
+		case "aug53":
 			return Triad.AUG;
 		case "aug6":
 		case "aug63":
@@ -42,6 +54,7 @@ public class SATB {
 			return Triad.AUG64;
 		// DIMINISHED TRIADS
 		case "dim":
+		case "dim53":
 			return Triad.DIM;
 		case "dim6":
 		case "dim63":
@@ -60,7 +73,6 @@ public class SATB {
 			return Seventh.MAJ42;
 		// DOMINANT SEVENTHS
 		case "dom7":
-		case "dom":
 			return Seventh.DOM7;
 		case "dom65":
 			return Seventh.DOM65;
@@ -79,9 +91,7 @@ public class SATB {
 			return Seventh.MIN42;
 		// MAJOR SEVENTHS
 		case "halfdim7":
-		case "halfdim":
 		case "hdim7":
-		case "hdim":
 			return Seventh.HALFDIM7;
 		case "halfdim65":
 		case "hdim65":

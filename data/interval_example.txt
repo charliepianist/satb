@@ -11,13 +11,13 @@ P1:min
 P1:min42
 m6:maj
 m2:maj
-m3:dom7
+m3:dom
 m6:maj
-P5:maj
+P5:dom
 P1:maj
 P4:min64
 P1:maj
 M2:hdim7
 P1:min6
-P5:maj
+P5:dom7
 P1:min

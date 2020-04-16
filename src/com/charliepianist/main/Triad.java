@@ -29,6 +29,22 @@ public class Triad implements Chord {
 	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
 	public static final Triad MAJ_TRIP_ROOT = new Triad(Interval.M3, Interval.P5, ROOT, new Range[] { Range.R13, Range.R11, Range.R02 });
 	
+	public static final Triad DOM = new Triad(Interval.M3, Interval.P5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 }, new SignedInterval[][] {
+		null, 
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null
+	});
+	public static final Triad DOM6 = new Triad(Interval.m3, Interval.m6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null,
+		null
+	});
+	public static final Triad DOM64 = new Triad(Interval.P4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 }, new SignedInterval[][] {
+		null,
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) }
+	});
+	
 	public static final Triad MIN = new Triad(Interval.m3, Interval.P5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 });
 	public static final Triad MIN53 = MIN;
 	public static final Triad MIN6 = new Triad(Interval.M3, Interval.M6, FIRST, new Range[] { Range.R12, Range.R12, Range.R12 });
