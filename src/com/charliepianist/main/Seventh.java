@@ -193,7 +193,9 @@ public class Seventh implements Chord {
 		int cumulativedf = 0;
 		for(int i = 0; i < counter.length; i++) {
 			if(counter[i] > allowedAmount[i].getMax()) return false;
-			cumulativedf += counter[i] - allowedAmount[i].getMin();
+			if(counter[i] - allowedAmount[i].getMin() > 0) {
+				cumulativedf += counter[i] - allowedAmount[i].getMin();
+			}
 		}
 		if(cumulativedf > df) return false;
 		return true;
