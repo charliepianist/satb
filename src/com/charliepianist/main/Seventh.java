@@ -22,31 +22,61 @@ public class Seventh implements Chord {
 	public static final Seventh MAJ43 = new Seventh(Interval.M3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MAJ42 = new Seventh(Interval.m2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R11, Range.R12, Range.R12, Range.R01 });
 
-	public static final Seventh DOM7 = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 }, new SignedInterval[][] {
+	public static final Seventh DOM7_STRICT = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) }
 	});
-	public static final Seventh DOM65 = new Seventh(Interval.m3, Interval.d5, Interval.m6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 }, new SignedInterval[][] {
+	public static final Seventh DOM65_STRICT = new Seventh(Interval.m3, Interval.d5, Interval.m6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
 		null
 	});
-	public static final Seventh DOM43 = new Seventh(Interval.m3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
+	public static final Seventh DOM43_STRICT = new Seventh(Interval.m3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) }
 	});
-	public static final Seventh DOM42 = new Seventh(Interval.M2, Interval.A4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R12, Range.R11, Range.R01 }, new SignedInterval[][] {
+	public static final Seventh DOM42_STRICT = new Seventh(Interval.M2, Interval.A4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null
+	});
+	public static final Seventh DOM7_LOOSE = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 }, new SignedInterval[][] {
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) }
+	});
+	public static final Seventh DOM65_LOOSE = new Seventh(Interval.m3, Interval.d5, Interval.m6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 }, new SignedInterval[][] {
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		null
+	});
+	public static final Seventh DOM43_LOOSE = new Seventh(Interval.m3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
+		null,
+		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) }
+	});
+	public static final Seventh DOM42_LOOSE = new Seventh(Interval.M2, Interval.A4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R12, Range.R11, Range.R01 }, new SignedInterval[][] {
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) },
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
 		null
 	});
 
+	// TODO: Allow triads that follow dominant 7th chords to triple root (but not all triads)
+	public static final Seventh DOM7 = DOM7_LOOSE;
+	public static final Seventh DOM65 = DOM65_LOOSE;
+	public static final Seventh DOM43 = DOM43_LOOSE;
+	public static final Seventh DOM42 = DOM42_LOOSE;
+	
 	public static final Seventh MIN7 = new Seventh(Interval.m3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 });
 	public static final Seventh MIN65 = new Seventh(Interval.M3, Interval.P5, Interval.M6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 });
 	public static final Seventh MIN43 = new Seventh(Interval.m3, Interval.P4, Interval.m6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });

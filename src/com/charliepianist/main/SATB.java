@@ -14,7 +14,7 @@ public class SATB {
 	public static final int TONES = 2;
 	
 	private static final String[] ioNames = new String[] {
-			"data/roman_example.txt",
+			"data/standard.txt",
 			"out/out.midi"
 	};
 	

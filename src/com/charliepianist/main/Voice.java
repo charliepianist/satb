@@ -207,11 +207,11 @@ public class Voice {
 		if(consecutiveSteps < 2) {
 			return 0;
 		}else if(consecutiveSteps < 4) {
-			return 0;
+			return 1;
 		}else if(consecutiveSteps == 4) {
-			return 0;
+			return 1;
 		}else {
-			return 0;
+			return 2;
 		}
 	}
 	

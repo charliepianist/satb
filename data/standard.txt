@@ -1,4 +1,10 @@
 Eb
 roman
 entropy: default
-P1:
+I
+vi6
+V6
+IV6
+I64
+V7
+I
