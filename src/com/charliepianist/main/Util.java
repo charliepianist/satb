@@ -1,6 +1,7 @@
 package com.charliepianist.main;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Util {
 	public static String repeatChar(char c, int n) {
@@ -33,6 +34,18 @@ public class Util {
 		
 		public int getMax() {
 			return max;
+		}
+	}
+	
+	// If elem is in list, moves elem to the front and shifts the rest to the right by one.
+	public static <T> void moveToFront(List<T> list, T elem) {
+		if(list.size() == 0) throw new IllegalArgumentException("List cannot be empty.");
+		for(int i = 0; i < list.size(); i++) {
+			if(list.get(i).equals(elem)) {
+				list.remove(i);
+				list.add(0, elem);
+				return;
+			}
 		}
 	}
 }

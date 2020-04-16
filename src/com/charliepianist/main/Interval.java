@@ -186,6 +186,24 @@ public class Interval {
 		return i;
 	}
 	
+	public boolean offByOctave(Interval other) {
+		return offByOctave(other, false);
+	}
+	
+	// Are these intervals either equal or some number of octaves apart?
+	public boolean offByOctave(Interval other, boolean allowEnharmonic) {
+		Interval i1 = this.normalize();
+		Interval i2 = other.normalize();
+		if(allowEnharmonic) return i1.enharmonic(i2);
+		return i1.equals(i2);
+	}
+	
+	// Not very important since there's not that many usable Intervals anyways
+	@Override
+	public int hashCode() {
+		return (quality + interval * 31);
+	}
+	
 	// Finds interval between two tones. Gets the interval between note with lower key/octave, or if they are equal, with lower pitch
 	// and the higher note.
 	public static Interval intervalBetween(Tone one, Tone two) {

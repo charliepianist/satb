@@ -2,9 +2,11 @@ package com.charliepianist.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.charliepianist.main.Interval.SignedInterval;
 
 public class SATBGenerator {
 	public static final int ENTROPY_NONE = Voice.ENTROPY_NONE;
@@ -19,6 +21,15 @@ public class SATBGenerator {
 	public static final Tone TENOR_BOTTOM = Tone.C3;
 	public static final Tone BASS_TOP = Tone.E4;
 	public static final Tone BASS_BOTTOM = Tone.LOWEST_TONE; // E2
+	
+	// Preferred resolutions for each interval from the tonic in decreasing order of preference
+	public static final HashMap<Interval, SignedInterval[]> preferredResolutions;
+	static {
+		preferredResolutions = new HashMap<Interval, SignedInterval[]>();
+		preferredResolutions.put(Interval.m6, new SignedInterval[] { new SignedInterval(Interval.m2, false), SignedInterval.UNISON });
+		preferredResolutions.put(Interval.A5, new SignedInterval[] { new SignedInterval(Interval.m2), SignedInterval.UNISON });
+		preferredResolutions.put(Interval.M7, new SignedInterval[] { new SignedInterval(Interval.m2), SignedInterval.UNISON, new SignedInterval(Interval.M2, false) });
+	}
 	
 	private Voice s, a, t, b;
 	
@@ -43,12 +54,14 @@ public class SATBGenerator {
 		return null;
 	}
 	
-	// Todo: Tritone resolution?
 	// True indicates success
+	// Voices handle leaps and stepwise motion
+	// SATBGenerator handles most of the SATB voice-leading (e.g. tritone resolution, raised interval back down)
 	private boolean generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index, int entropy, boolean strictLeading) {
 		Tone root = BASS_BOTTOM.nextInstanceOf(tonic.up(bassIntervals.get(index))); // Lowest in-range note that can be the root of the chord
+		Tone minTonic = Tone.MIN_TONE.nextInstanceOf(tonic);
 		Chord chord = chords.get(index);
-		Collection<Tone> tones = chord.tones(root);
+		List<Tone> tones = chord.tones(root);
 		ArrayList<Tone> currTones = new ArrayList<Tone>();
 		int numChords = bassIntervals.size();
 		
@@ -58,7 +71,7 @@ public class SATBGenerator {
 		currTones.add(root);
 		
 		// Setup for the following
-		Collection<Tone> sOptions, aOptions, tOptions, bOptions;
+		List<Tone> sOptions, aOptions, tOptions, bOptions;
 		Tone[] sTemp, aTemp, tTemp, bTemp;
 		Chord prevChord = null;
 		Tone prevRoot = null;
@@ -74,11 +87,25 @@ public class SATBGenerator {
 				sOptions = Arrays.asList(sTemp).stream()
 						.distinct()
 						.filter(sOptions::contains)
-						.collect(Collectors.toSet());
+						.collect(Collectors.toList());
+			}
+		}
+		// Final contents, but not final order
+		sOptions = s.validMoves(sOptions, root, Tone.MAX_TONE, entropy);
+		
+		// Prioritize preferred resolutions
+		if(index >= 1) {
+			Tone sLast = s.last();
+			Interval fromTonic = minTonic.intervalTo(sLast).normalize(); 
+			if(preferredResolutions.containsKey(fromTonic) && sOptions.size() > 0) {
+				SignedInterval[] prefs = preferredResolutions.get(fromTonic);
+				for(int i = prefs.length - 1; i >= 0; i--) {
+					Util.moveToFront(sOptions, prefs[i].addTo(sLast));
+				}
 			}
 		}
 			
-		for(Tone sopranoTone : s.validMoves(sOptions, root, Tone.MAX_TONE, entropy)) {
+		for(Tone sopranoTone : sOptions) {
 			// Check for parallel intervals
 			if(Voice.parallelPerfectIntervals(b, s, root, sopranoTone)) {
 				continue;
@@ -99,11 +126,25 @@ public class SATBGenerator {
 					tOptions = Arrays.asList(tTemp).stream()
 							.distinct()
 							.filter(tOptions::contains)
-							.collect(Collectors.toSet());
+							.collect(Collectors.toList());
+				}
+			}
+			// Final contents, but not final order
+			tOptions = t.validMoves(tOptions, root, sopranoTone, entropy);
+			
+			// Prioritize preferred resolutions
+			if(index >= 1) {
+				Tone tLast = t.last();
+				Interval fromTonic = minTonic.intervalTo(tLast).normalize(); 
+				if(preferredResolutions.containsKey(fromTonic) && tOptions.size() > 0) {
+					SignedInterval[] prefs = preferredResolutions.get(fromTonic);
+					for(int i = prefs.length - 1; i >= 0; i--) {
+						Util.moveToFront(tOptions, prefs[i].addTo(tLast));
+					}
 				}
 			}
 			
-			for(Tone tenorTone : t.validMoves(tOptions, root, sopranoTone, entropy)) {
+			for(Tone tenorTone : tOptions) {
 
 				// Check for parallel intervals
 				if(Voice.parallelPerfectIntervals(b, t, root, tenorTone)
@@ -125,11 +166,25 @@ public class SATBGenerator {
 						aOptions = Arrays.asList(aTemp).stream()
 								.distinct()
 								.filter(aOptions::contains)
-								.collect(Collectors.toSet());
+								.collect(Collectors.toList());
+					}
+				}
+				// Final contents, but not final order
+				aOptions = a.validMoves(aOptions, Tone.max(tenorTone, sopranoTone.down(Interval.OCTAVE)), Tone.min(sopranoTone, tenorTone.up(Interval.OCTAVE)), entropy);
+				
+				// Prioritize preferred resolutions
+				if(index >= 1) {
+					Tone aLast = a.last();
+					Interval fromTonic = minTonic.intervalTo(aLast).normalize(); 
+					if(preferredResolutions.containsKey(fromTonic) && aOptions.size() > 0) {
+						SignedInterval[] prefs = preferredResolutions.get(fromTonic);
+						for(int i = prefs.length - 1; i >= 0; i--) {
+							Util.moveToFront(aOptions, prefs[i].addTo(aLast));
+						}
 					}
 				}
 				
-				for(Tone altoTone : a.validMoves(aOptions, Tone.max(tenorTone, sopranoTone.down(Interval.OCTAVE)), Tone.min(sopranoTone, tenorTone.up(Interval.OCTAVE)), entropy)) {
+				for(Tone altoTone : aOptions) {
 					
 					// Check for parallel intervals
 					if(Voice.parallelPerfectIntervals(b, a, root, altoTone)
@@ -151,11 +206,25 @@ public class SATBGenerator {
 							bOptions = Arrays.asList(bTemp).stream()
 									.distinct()
 									.filter(bOptions::contains)
-									.collect(Collectors.toSet());
-						}
-						
+									.collect(Collectors.toList());
+						}	
 					}
-					for(Tone bassTone : b.filterInRange(bOptions, entropy)) {
+					bOptions = b.filterInRange(bOptions, entropy);
+					
+					// Prioritize preferred resolutions
+					if(index >= 1) {
+						Tone bLast = b.last();
+						Interval fromTonic = minTonic.intervalTo(bLast).normalize(); 
+						if(preferredResolutions.containsKey(fromTonic) && bOptions.size() > 0) {
+							SignedInterval[] prefs = preferredResolutions.get(fromTonic);
+							for(int i = prefs.length - 1; i >= 0; i--) {
+								Util.moveToFront(bOptions, prefs[i].addTo(bLast));
+							}
+					
+						}
+					}
+					
+					for(Tone bassTone : bOptions) {
 						if(bassTone.gt(tenorTone)) continue;
 						s.add(sopranoTone);
 						a.add(altoTone);

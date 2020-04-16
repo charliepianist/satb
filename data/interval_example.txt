@@ -1,4 +1,4 @@
-C
+Cmin
 intervals
 entropy: default
 P1:min

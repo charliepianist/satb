@@ -225,6 +225,12 @@ public class Tone {
 		return this.key == t.key && this.octave == t.octave && this.offset == t.offset && this.value == t.value;
 	}
 	
+	// Not very important since there's not that many usable Tones anyways
+	@Override
+	public int hashCode() {
+		return (offset + octave * 31 + key * 961);
+	}
+	
 	// Do these notes sound the same?
 	public boolean enharmonic(Tone other) {
 		return this.value == other.value;

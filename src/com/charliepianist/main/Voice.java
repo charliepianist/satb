@@ -44,17 +44,17 @@ public class Voice {
 		return tones.isEmpty();
 	}
 	
-	public Collection<Tone> filterInRange(Collection<Tone> options) {
+	public List<Tone> filterInRange(Collection<Tone> options) {
 		return filterInRange(options, ENTROPY_NONE);
 	}
 	
-	public Collection<Tone> filterInRange(Collection<Tone> options, int entropy) {
+	public List<Tone> filterInRange(Collection<Tone> options, int entropy) {
 		return filterInRange(options, entropy, true);
 	}
 	
 	// Just filter options for notes that are in this voice's range, and within an octave of previous note, if applicable
 	// Specifically can be useful for Bass with looser voice leading requirements
-	public Collection<Tone> filterInRange(Collection<Tone> options, int entropy, boolean withinOctave) {
+	public List<Tone> filterInRange(Collection<Tone> options, int entropy, boolean withinOctave) {
 		List<Tone> tones = options.stream().filter(t -> t.geq(bottom) && t.leq(top)).collect(Collectors.toList());
 		if(withinOctave && this.tones.size() >= 1) {
 			Tone lastTone = this.tones.get(this.tones.size() - 1);
@@ -64,20 +64,20 @@ public class Voice {
 		return tones;
 	}
 	
-	public Collection<Tone> validMoves(Chord chord, Tone bass, Tone min, Tone max) {
+	public List<Tone> validMoves(Chord chord, Tone bass, Tone min, Tone max) {
 		Tone lowest = bottom.nextInstanceOf(bass);
 		Collection<Tone> options = chord.tones(lowest);
 		return validMoves(options, min, max);
 	}
 	
-	public Collection<Tone> validMoves(Collection<Tone> options, Tone min, Tone max) {
+	public List<Tone> validMoves(Collection<Tone> options, Tone min, Tone max) {
 		return validMoves(options, min, max, ENTROPY_NONE);
 	}
 	
 	// Possible moves among list of Tones tones, with restrictions from other voices min, max
 	// Entropy refers to shuffling
 	// Sort refers to whether to sort or leave in order from lowest to highest
-	public Collection<Tone> validMoves(Collection<Tone> options, Tone min, Tone max, int entropy) {
+	public List<Tone> validMoves(Collection<Tone> options, Tone min, Tone max, int entropy) {
 		int STEP = 2;
 		int SMALL_LEAP = 4;
 		
@@ -194,7 +194,9 @@ public class Voice {
 		
 		if(interval.enharmonic(Interval.normalize(v1.last().intervalTo(v2.last())))) {
 			if(interval.enharmonic(Interval.P5) || interval.enharmonic(Interval.OCTAVE) || interval.enharmonic(Interval.UNISON)) {
-				return true;
+				if(!v1.last().equals(t1) && !v2.last().equals(t2)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -205,11 +207,11 @@ public class Voice {
 		if(consecutiveSteps < 2) {
 			return 0;
 		}else if(consecutiveSteps < 4) {
-			return 2;
+			return 0;
 		}else if(consecutiveSteps == 4) {
-			return 3;
+			return 0;
 		}else {
-			return 4;
+			return 0;
 		}
 	}
 	

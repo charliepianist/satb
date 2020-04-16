@@ -1,0 +1,13 @@
+Cmin
+roman
+entropy: default
+i
+iv7
+V7
+i
+VI
+bII
+III:dom7
+VI
+V
+i
