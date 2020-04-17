@@ -237,12 +237,12 @@ public class Triad implements Chord {
 		if(other == null) return false;
 		if(!(other instanceof Triad)) return false;
 		Triad t = (Triad) other;
-		return t.middle.equals(this.middle) && t.top.equals(this.top) && t.inversion == this.inversion;
+		return t.middle.equals(this.middle) && t.top.equals(this.top) && t.inversion == this.inversion && Arrays.deepEquals(this.allowedAmount, t.allowedAmount) && Arrays.deepEquals(this.requiredNext, t.requiredNext);
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.middle.hashCode() * 31 * 31 + this.top.hashCode() * 31 + this.inversion;
+		return this.middle.hashCode() * 31 * 31 + this.top.hashCode() * 31 + this.inversion + this.allowedAmount(0).hashCode() + this.allowedAmount(1).hashCode() * 31 + this.allowedAmount(2).hashCode() * 31 * 31;
 	}
 	
 	@Override

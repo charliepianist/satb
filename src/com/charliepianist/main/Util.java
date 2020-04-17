@@ -35,6 +35,19 @@ public class Util {
 		public int getMax() {
 			return max;
 		}
+		
+		@Override
+		public boolean equals(Object other) {
+			if(other == this) return true;
+			if(!(other instanceof Range)) return false;
+			Range r = (Range) other;
+			return (r.max == this.max && r.min == this.min);
+		}
+		
+		@Override
+		public int hashCode() {
+			return this.min + this.max * 31;
+		}
 	}
 	
 	// If elem is in list, moves elem to the front and shifts the rest to the right by one.

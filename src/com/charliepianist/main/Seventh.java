@@ -276,12 +276,12 @@ public class Seventh implements Chord {
 		if(other == null) return false;
 		if(!(other instanceof Seventh)) return false;
 		Seventh s = (Seventh) other;
-		return s.first.equals(this.first) && s.second.equals(this.second) && s.third.equals(this.third) && s.inversion == this.inversion;
+		return s.first.equals(this.first) && s.second.equals(this.second) && s.third.equals(this.third) && s.inversion == this.inversion && Arrays.deepEquals(this.allowedAmount, s.allowedAmount) && Arrays.deepEquals(this.requiredNext, s.requiredNext);
 	}
 	
 	@Override
 	public int hashCode() {
-		return first.hashCode() * 31 * 31 * 31 + second.hashCode() * 31 * 31 + third.hashCode() * 31 + inversion;
+		return first.hashCode() * 31 * 31 * 31 + second.hashCode() * 31 * 31 + third.hashCode() * 31 + inversion + this.allowedAmount(0).hashCode() + this.allowedAmount(1).hashCode() * 31 + this.allowedAmount(2).hashCode() * 31 * 31 + this.allowedAmount(3).hashCode() * 31 * 31 * 31;
 	}
 	
 	@Override

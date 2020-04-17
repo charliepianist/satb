@@ -80,9 +80,9 @@ public class Profile {
 			));
 		// IV CHORD
 		exampleRelations.put(State.MAJ_IV, new Distribution<State>(
-				new State[] { State.MAJ_I_END, State.MAJ_I, State.MAJ_I6, State.MAJ_I64, State.MAJ_ii, State.MAJ_ii6, State.MAJ_iii6, State.MAJ_V, State.MAJ_V6, State.MAJ_vii, State.MAJ_vii6,
+				new State[] { State.MAJ_I_END, State.MAJ_I, State.MAJ_I6, State.MAJ_I64, State.MAJ_ii, State.MAJ_ii6, State.MAJ_iii6, State.MAJ_Vdom, State.MAJ_V6, State.MAJ_vii, State.MAJ_vii6,
 						State.MAJ_I7, State.MAJ_I43, State.MAJ_ii7, State.MAJ_ii65, State.MAJ_IV7, State.MAJ_V7, State.MAJ_V65, State.MAJ_V43, State.MAJ_V42, State.MAJ_vi65, State.MAJ_vii7, State.MAJ_vii65, State.MAJ_vii43},
-				new int[]   { 7,               7,           10,           36,            3,            3,             1,              14,          4,            2,             1,
+				new int[]   { 7,               7,           10,           36,            3,            3,             1,              14,             4,            2,             1,
 						4,            1,             7,             4,              2,             16,           4,             2,             3,             1,              1,              1,               1}
 			));
 		exampleRelations.put(State.MAJ_IV6, new Distribution<State>(
@@ -101,9 +101,9 @@ public class Profile {
 				new int[]   { 72,          20,              8 }
 			));
 		exampleRelations.put(State.MAJ_V6, new Distribution<State>(
-				new State[] { State.MAJ_I, State.MAJ_IV6, State.MAJ_IV64, State.MAJ_V, State.MAJ_vi, State.MAJ_vi6, State.MAJ_vii,
+				new State[] { State.MAJ_I, State.MAJ_IV6, State.MAJ_IV64, State.MAJ_Vdom, State.MAJ_vi, State.MAJ_vi6, State.MAJ_vii,
 						State.MAJ_I7, State.MAJ_I42, State.MAJ_ii43, State.MAJ_ii42, State.MAJ_IV65, State.MAJ_V7, State.MAJ_V65, State.MAJ_vi7, State.MAJ_vi65, State.MAJ_vii7},
-				new int[]   { 20,          28,            8,              5,           12,           6,             6,
+				new int[]   { 20,          28,            8,              5,              12,           6,             6,
 						2,            1,             1,              1,              2,              4,            16,            8,             2,              4}
 			));
 		exampleRelations.put(State.MAJ_V64, new Distribution<State>(
@@ -274,7 +274,7 @@ public class Profile {
 	public State next() {
 		if(current == null) throw new IllegalArgumentException("Cannot call next() from reference profile. Create a new Profile instead (new Profile(Profile profile, boolean minor))");
 		Distribution<State> dist = relations.get(current);
-		if(dist == null) throw new IllegalArgumentException("Invalid profile. Profiles must be self-contained; that is, any state that the profile can reach must have a distribution of next states associated to it.");
+		if(dist == null) throw new IllegalArgumentException("Invalid profile. Profiles must be self-contained, but " + current + " does not have a distribution of next states associated to it.");
 		
 		State nextState = dist.sample();
 		current = nextState;

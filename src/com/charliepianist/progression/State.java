@@ -161,11 +161,15 @@ public class State {
 		if(this == other) return true;
 		if(!(other instanceof State)) return false;
 		State s = (State) other;
-		return s.rootInterval.equals(this.rootInterval) && s.chord.equals(this.chord);
+		return s.rootInterval.equals(this.rootInterval) && s.chord.equals(this.chord) && Double.compare(this.probEnd, s.probEnd) == 0;
 	}
 	
 	@Override
 	public int hashCode() {
 		return this.rootInterval.hashCode() * 31 * 31 + this.chord.hashCode();
+	}
+	
+	public String toString() {
+		return this.rootInterval + ", " + this.chord; 
 	}
 }
