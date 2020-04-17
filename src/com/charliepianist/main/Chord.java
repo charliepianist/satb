@@ -27,4 +27,10 @@ public interface Chord {
 	// Return a Tone if curr must be followed by another tone (or list of tones), or return null if there is no
 	// requirement. The array should be sorted in order of preference of following tones.
 	public Tone[] allowedNext(Tone bass, Tone curr);
+	
+	@Override
+	public boolean equals(Object other);
+	
+	@Override
+	public int hashCode();
 }

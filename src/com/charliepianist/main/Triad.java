@@ -226,6 +226,20 @@ public class Triad implements Chord {
 		return ret;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if(this == other) return true;
+		if(other == null) return false;
+		if(!(other instanceof Triad)) return false;
+		Triad t = (Triad) other;
+		return t.middle.equals(this.middle) && t.top.equals(this.top) && t.inversion == this.inversion;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.middle.hashCode() * 31 * 31 + this.top.hashCode() * 31 + this.inversion;
+	}
+	
 	public static void main(String[] args) {
 		System.out.println("MAJOR TRIADS");
 		System.out.println("==================");

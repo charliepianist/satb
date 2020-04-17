@@ -127,4 +127,18 @@ public class State {
 	public Interval getBassInterval() {
 		return bassInterval;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(other == null) return false;
+		if(this == other) return true;
+		if(!(other instanceof State)) return false;
+		State s = (State) other;
+		return s.bassInterval.equals(this.bassInterval) && s.chord.equals(this.chord);
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.bassInterval.hashCode() * 31 * 31 + this.chord.hashCode();
+	}
 }

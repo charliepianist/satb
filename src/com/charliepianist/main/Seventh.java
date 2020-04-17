@@ -265,6 +265,20 @@ public class Seventh implements Chord {
 		return ret;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if(this == other) return true;
+		if(other == null) return false;
+		if(!(other instanceof Seventh)) return false;
+		Seventh s = (Seventh) other;
+		return s.first.equals(this.first) && s.second.equals(this.second) && s.third.equals(this.third) && s.inversion == this.inversion;
+	}
+	
+	@Override
+	public int hashCode() {
+		return first.hashCode() * 31 * 31 * 31 + second.hashCode() * 31 * 31 + third.hashCode() * 31 + inversion;
+	}
+	
 	public static void main(String[] args) {
 		System.out.println("MAJOR SEVENTHS");
 		System.out.println("===================");
