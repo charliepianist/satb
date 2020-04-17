@@ -17,7 +17,11 @@ public class PatternOutput {
 	}
 	
 	public static void playSATB(Voice[] satb) {
-		Pattern pattern = PatternBuilder.songFromVoices(satb, 20, PatternBuilder.PIANO);
+		playSATB(satb, PatternBuilder.PIANO);
+	}
+	
+	public static void playSATB(Voice[] satb, int instr) {
+		Pattern pattern = PatternBuilder.songFromVoices(satb, 20, instr);
 		playPattern(pattern);
 	}
 	

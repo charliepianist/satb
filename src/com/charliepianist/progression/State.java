@@ -8,11 +8,12 @@ import com.charliepianist.main.Triad;
 public class State {
 	private Chord chord; // Chord quality
 	private Interval rootInterval; // Interval of root from tonic (normalized)
-	private boolean isEnd; // Is this state an end state?
+	private double probEnd; // What probability does this have of ending the sequence?
 	
 	// MAJOR KEY TRIADS - STANDARD
 
-	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON, true);
+	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON, 0.4);
+	public static final State MAJ_I_TRIP_ROOT = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON, 1);
 	public static final State MAJ_I6 = new State(Triad.MAJ63, Interval.UNISON);
 	public static final State MAJ_I64 = new State(Triad.MAJ64, Interval.UNISON);
 	public static final State MAJ_ii = new State(Triad.MIN, Interval.M2);
@@ -48,10 +49,10 @@ public class State {
 	public static final State MAJ_IV65 = new State(Seventh.MAJ65, Interval.P4);
 	public static final State MAJ_IV43 = new State(Seventh.MAJ43, Interval.P4);
 	public static final State MAJ_IV42 = new State(Seventh.MAJ42, Interval.P4);
-	public static final State MAJ_V7 = new State(Seventh.DOM7, Interval.P5);
-	public static final State MAJ_V65 = new State(Seventh.DOM65, Interval.P5);
-	public static final State MAJ_V43 = new State(Seventh.DOM43, Interval.P5);
-	public static final State MAJ_V42 = new State(Seventh.DOM42, Interval.P5);
+	public static final State MAJ_V7 = new State(Seventh.DOM7_STRICT, Interval.P5);
+	public static final State MAJ_V65 = new State(Seventh.DOM65_STRICT, Interval.P5);
+	public static final State MAJ_V43 = new State(Seventh.DOM43_STRICT, Interval.P5);
+	public static final State MAJ_V42 = new State(Seventh.DOM42_STRICT, Interval.P5);
 	public static final State MAJ_vi7 = new State(Seventh.MIN7, Interval.M6);
 	public static final State MAJ_vi65 = new State(Seventh.MIN65, Interval.M6);
 	public static final State MAJ_vi43 = new State(Seventh.MIN43, Interval.M6);
@@ -63,7 +64,8 @@ public class State {
 	
 	// MINOR KEY TRIADS - STANDARD
 
-	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON, true);
+	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON, 0.4);
+	public static final State MIN_i_TRIP_ROOT = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON, 1);
 	public static final State MIN_i6 = new State(Triad.MIN63, Interval.UNISON);
 	public static final State MIN_i64 = new State(Triad.MIN64, Interval.UNISON);
 	public static final State MIN_ii = new State(Triad.DIM, Interval.M2);
@@ -95,18 +97,14 @@ public class State {
 	public static final State MIN_ii65 = new State(Seventh.HALFDIM65, Interval.M2);
 	public static final State MIN_ii43 = new State(Seventh.HALFDIM43, Interval.M2);
 	public static final State MIN_ii42 = new State(Seventh.HALFDIM42, Interval.M2);
-	public static final State MIN_III7 = new State(Seventh.DOM7, Interval.m3);
-	public static final State MIN_III65 = new State(Seventh.DOM65, Interval.m3);
-	public static final State MIN_III43 = new State(Seventh.DOM43, Interval.m3);
-	public static final State MIN_III42 = new State(Seventh.DOM42, Interval.m3);
 	public static final State MIN_iv7 = new State(Seventh.MIN7, Interval.P4);
 	public static final State MIN_iv65 = new State(Seventh.MIN65, Interval.P4);
 	public static final State MIN_iv43 = new State(Seventh.MIN43, Interval.P4);
 	public static final State MIN_iv42 = new State(Seventh.MIN42, Interval.P4);
-	public static final State MIN_V7 = new State(Seventh.DOM7, Interval.P5);
-	public static final State MIN_V65 = new State(Seventh.DOM65, Interval.P5);
-	public static final State MIN_V43 = new State(Seventh.DOM43, Interval.P5);
-	public static final State MIN_V42 = new State(Seventh.DOM42, Interval.P5);
+	public static final State MIN_V7 = new State(Seventh.DOM7_STRICT, Interval.P5);
+	public static final State MIN_V65 = new State(Seventh.DOM65_STRICT, Interval.P5);
+	public static final State MIN_V43 = new State(Seventh.DOM43_STRICT, Interval.P5);
+	public static final State MIN_V42 = new State(Seventh.DOM42_STRICT, Interval.P5);
 	public static final State MIN_VI7 = new State(Seventh.MAJ7, Interval.m6);
 	public static final State MIN_VI65 = new State(Seventh.MAJ65, Interval.m6);
 	public static final State MIN_VI43 = new State(Seventh.MAJ43, Interval.m6);
@@ -117,13 +115,13 @@ public class State {
 	public static final State MIN_vii42 = new State(Seventh.DIM42, Interval.M7);
 	
 	public State(Chord chord, Interval rootInterval) {
-		this(chord, rootInterval, false);
+		this(chord, rootInterval, 0);
 	}
 	
-	public State(Chord chord, Interval rootInterval, boolean isEnd) {
+	public State(Chord chord, Interval rootInterval, double probEnd) {
 		this.chord = chord;
 		this.rootInterval = rootInterval;
-		this.isEnd = isEnd;
+		this.probEnd = probEnd;
 	}
 	
 	public Chord getChord() {
@@ -139,7 +137,7 @@ public class State {
 	}
 	
 	public boolean isEnd() {
-		return isEnd;
+		return Math.random() < this.probEnd;
 	}
 	
 	@Override

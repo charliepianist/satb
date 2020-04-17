@@ -24,7 +24,7 @@ public class Distribution<T> {
 		int rand = (int) (Math.random() * total);
 		for(int i = 0; i < cumulativeWeights.length; i++) {
 			if(rand < cumulativeWeights[i]) {
-				return options[i];
+				return options[i - 1];
 			}
 		}
 		return options[options.length - 1];

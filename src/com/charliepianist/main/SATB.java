@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.charliepianist.out.PatternBuilder;
 import com.charliepianist.out.PatternOutput;
 
 public class SATB {
@@ -630,20 +631,24 @@ public class SATB {
 		output(satb, false);
 	}
 	
-	private static void output(Voice[] satb, boolean play) {
+	public static void output(Voice[] satb, boolean play) {
+		output(satb, play, PatternBuilder.PIANO);
+	}
+	
+	public static void output(Voice[] satb, boolean play, int instrument) {
 		if(satb == null) {
 			System.out.println("Failed to generate SATB for given file (could not find voicing that follows SATB rules).");
 		}else {
 			System.out.println(satbToString(satb));
-			if(play) {
-				PatternOutput.playSATB(satb);
-				System.out.println("Playing.");
-			}
 			try {
 				PatternOutput.saveSATB(satb, ioNames[1]);
 				System.out.println("Saved to MIDI at '" + ioNames[1] + "'");
 			}catch(IOException e) {
 				e.printStackTrace();
+			}
+			if(play) {
+				System.out.println("Playing.");
+				PatternOutput.playSATB(satb, instrument);
 			}
 		}
 	}

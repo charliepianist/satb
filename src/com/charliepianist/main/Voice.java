@@ -14,6 +14,8 @@ public class Voice {
 	public static int ENTROPY_START = 1;
 	public static int ENTROPY_ALL = 2;
 	public static int ENTROPY_DEFAULT = ENTROPY_START;
+	private static int STEP = 2;
+	private static int SMALL_LEAP = 4;
 	
 	public Voice(Tone top, Tone bottom) {
 		this(new ArrayList<Tone>(), top, bottom);
@@ -63,7 +65,7 @@ public class Voice {
 		}
 		if(entropy >= ENTROPY_ALL || (entropy >= ENTROPY_START && this.isEmpty())) Collections.shuffle(tones);
 		else if(!this.isEmpty()) {
-			Collections.sort(tones, Tone.byDistanceTo(this.last()));
+			Collections.sort(tones, Tone.byDistanceTo(this.last(), idealInterval()));
 		}
 		return tones;
 	}
@@ -82,9 +84,6 @@ public class Voice {
 	// Entropy refers to shuffling
 	// Sort refers to whether to sort or leave in order from lowest to highest
 	public List<Tone> validMoves(Collection<Tone> options, Tone min, Tone max, int entropy) {
-		int STEP = 2;
-		int SMALL_LEAP = 4;
-		
 		Tone origMin = min;
 		Tone origMax = max;
 		ArrayList<Tone> moves = new ArrayList<Tone>();
@@ -159,13 +158,7 @@ public class Voice {
 		// Sort by ideal distance given consecutive steps leading up to this point
 		if(entropy < ENTROPY_ALL) {
 			if(!this.isEmpty()) {
-				int consecutiveSteps = 0;
-				for(int i = this.tones.size() - 2; i >= 0; i--) {
-					if(tones.get(i).dist(tones.get(i + 1)) <= STEP) {
-						consecutiveSteps++;
-					}
-				}
-				int idealDist = idealInterval(consecutiveSteps);
+				int idealDist = idealInterval();
 				Collections.sort(moves, Tone.byDistanceTo(this.last(), idealDist));
 			}else {
 				if(entropy < ENTROPY_START) {
@@ -191,6 +184,17 @@ public class Voice {
 		return moves;
 	}
 	
+	// How many consecutive steps has this voice had?
+	public int consecutiveSteps() {
+		int consecutiveSteps = 0;
+		for(int i = this.tones.size() - 2; i >= 0; i--) {
+			if(tones.get(i).dist(tones.get(i + 1)) <= STEP) {
+				consecutiveSteps++;
+			}else break;
+		}
+		return consecutiveSteps;
+	}
+	
 	// Do v1 and v2 have parallel perfect intervals if we were to add t1 to v1 and t2 to v2?
 	public static boolean parallelPerfectIntervals(Voice v1, Voice v2, Tone t1, Tone t2) {
 		if(v1.isEmpty() || v2.isEmpty()) return false;
@@ -205,6 +209,10 @@ public class Voice {
 		}
 		return false;
 	}
+
+	public int idealInterval() {
+		return idealInterval(consecutiveSteps());
+	}
 	
 	// What is the ideal distance to move given some number of consecutive steps?
 	public static int idealInterval(int consecutiveSteps) {
@@ -213,9 +221,9 @@ public class Voice {
 		}else if(consecutiveSteps < 4) {
 			return 1;
 		}else if(consecutiveSteps == 4) {
-			return 1;
-		}else {
 			return 2;
+		}else {
+			return 3;
 		}
 	}
 	
