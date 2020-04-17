@@ -1,5 +1,6 @@
 package com.charliepianist.progression;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Profile {
@@ -12,6 +13,17 @@ public class Profile {
 		testRelations.put(State.MAJ_IV, new Distribution<State>( new State[] { State.MAJ_I64 }, new int[] { 1 }));
 		testRelations.put(State.MAJ_Vdom, new Distribution<State>( new State[] { State.MAJ_I_END }, new int[] { 1 } ));
 		testRelations.put(State.MAJ_V7, new Distribution<State>( new State[] { State.MAJ_I_TRIP_ROOT_END }, new int[] { 1 } ));
+	}
+	
+	private static final HashMap<State, Distribution<State>> randomRelations;
+	static {
+		randomRelations = new HashMap<State, Distribution<State>>();
+		int numStates = State.ALL_STATES.length;
+		int[] weights = new int[numStates];
+		Arrays.fill(weights, 1);
+		for(int i = 0; i < numStates; i++) {
+			randomRelations.put(State.ALL_STATES[i], new Distribution<State>(State.ALL_STATES, weights));
+		}
 	}
 	
 	private static final HashMap<State, Distribution<State>> exampleRelations;
@@ -230,6 +242,7 @@ public class Profile {
 	}
 
 	public static final Profile TEST = new Profile(testRelations);
+	public static final Profile RANDOM = new Profile(randomRelations);
 	public static final Profile EXAMPLE = new Profile(exampleRelations);
 	
 	private HashMap<State, Distribution<State>> relations;

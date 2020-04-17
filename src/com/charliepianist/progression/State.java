@@ -124,6 +124,11 @@ public class State {
 	public static final State MIN_vii43 = new State(Seventh.DIM43, Interval.M7);
 	public static final State MIN_vii42 = new State(Seventh.DIM42, Interval.M7);
 	
+	public static final State[] ALL_STATES = new State[] { 
+		State.MAJ_I, State.MAJ_I_END, State.MAJ_I_TRIP_ROOT, State.MAJ_I_TRIP_ROOT_END, State.MAJ_I7, State.MAJ_I65, State.MAJ_I43, State.MAJ_I42, State.MAJ_ii, State.MAJ_ii6, State.MAJ_ii64, State.MAJ_ii7, State.MAJ_ii65, State.MAJ_ii43, State.MAJ_ii42, State.MAJ_iii, State.MAJ_iii6, State.MAJ_iii64, State.MAJ_IV, State.MAJ_IV6, State.MAJ_IV64, State.MAJ_IV7, State.MAJ_IV65, State.MAJ_IV43, State.MAJ_IV42, State.MAJ_V, State.MAJ_V6, State.MAJ_V64, State.MAJ_Vdom, State.MAJ_V6dom, State.MAJ_V64dom, State.MAJ_V7, State.MAJ_V65, State.MAJ_V43, State.MAJ_V42, State.MAJ_vi, State.MAJ_vi6, State.MAJ_vi64, State.MAJ_vi7, State.MAJ_vi65, State.MAJ_vi43, State.MAJ_vi42, State.MAJ_vii, State.MAJ_vii6, State.MAJ_vii64, State.MAJ_vii7, State.MAJ_vii65, State.MAJ_vii43, State.MAJ_vii42,
+		State.MIN_i, State.MIN_i_END, State.MIN_i_TRIP_ROOT, State.MIN_i_TRIP_ROOT_END, State.MIN_i7, State.MIN_i65, State.MIN_i43, State.MIN_i42, State.MIN_ii, State.MIN_ii6, State.MIN_ii64, State.MIN_ii7, State.MIN_ii65, State.MIN_ii43, State.MIN_ii42, State.MIN_III, State.MIN_III6, State.MIN_III64, State.MIN_iv, State.MIN_iv6, State.MIN_iv64, State.MIN_iv7, State.MIN_iv65, State.MIN_iv43, State.MIN_iv42, State.MIN_V, State.MIN_V6, State.MIN_V64, State.MIN_Vdom, State.MIN_V6dom, State.MIN_V64dom, State.MIN_V7, State.MIN_V65, State.MIN_V43, State.MIN_V42, State.MIN_VI, State.MIN_VI6, State.MIN_VI64, State.MIN_VI7, State.MIN_VI65, State.MIN_VI43, State.MIN_VI42, State.MIN_vii, State.MIN_vii6, State.MIN_vii64, State.MIN_vii7, State.MIN_vii65, State.MIN_vii43, State.MIN_vii42
+	};
+	
 	public State(Chord chord, Interval rootInterval) {
 		this(chord, rootInterval, 0);
 	}

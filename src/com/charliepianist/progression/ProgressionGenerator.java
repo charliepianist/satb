@@ -11,14 +11,19 @@ import com.charliepianist.main.Tone;
 import com.charliepianist.main.Voice;
 
 public class ProgressionGenerator {
+	
+	public static final int MAX_STATES = 50; // Max number of states of a generated progression
+	
 	public static List<State> generateStates(Profile profile, boolean minor) {
 		profile = new Profile(profile, minor);
 		ArrayList<State> list = new ArrayList<State>();
 		list.add(profile.getCurrent()); // Add initial tonic chord
+		int states = 1;
 		
 		State next = profile.next();
-		while(!next.isEnd()) {
+		while(!next.isEnd() && states < MAX_STATES - 1) {
 			list.add(next);
+			states++;
 			next = profile.next();
 		}
 		list.add(next);
@@ -47,7 +52,7 @@ public class ProgressionGenerator {
 	}
 	
 	public static void main(String[] args) {
-		Voice[] satb = generateSATB(Profile.EXAMPLE, Tone.C4, false, SATBGenerator.ENTROPY_DEFAULT);
+		Voice[] satb = generateSATB(Profile.RANDOM, Tone.C4, false, SATBGenerator.ENTROPY_DEFAULT);
 		SATB.output(satb, false);
 	}
 	

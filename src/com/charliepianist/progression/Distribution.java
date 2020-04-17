@@ -5,7 +5,7 @@ public class Distribution<T> {
 	private int[] cumulativeWeights; // each int is the weights summed up from everything BEFORE it, not including it
 	private int total;
 	
-	public Distribution(T[] options, int[] weights) {
+	public Distribution(T[] options, int[] weights) { // Note that T should be immutable 
 		if(options == null || weights == null) throw new IllegalArgumentException("options and weights cannot be null");
 		if(options.length != weights.length) throw new IllegalArgumentException("options and weights must have the same length");
 		if(options.length < 1) throw new IllegalArgumentException("options and weights must have length at least 1");
