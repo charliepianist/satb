@@ -2,6 +2,8 @@ package com.charliepianist.main;
 
 import java.util.List;
 
+import com.charliepianist.main.Util.Range;
+
 public interface Chord {
 	// Intervals of acceptable notes *relative to the bass* (the lowest note), including the bass (Perfect Unison)
 	// Returned in increasing order of magnitude.
@@ -28,9 +30,17 @@ public interface Chord {
 	// requirement. The array should be sorted in order of preference of following tones.
 	public Tone[] allowedNext(Tone bass, Tone curr);
 	
+	// Return true if and only if this chord, using strict voice leading, can precede next.
+	public boolean canPrecedeStrictly(Chord next, Tone thisRoot, Tone nextRoot);
+	
+	// Returns the allowed amount of the interval passed in (0 -> bass, 1 -> first, 2 -> second, 3 -> third (if applicable), etc)
+	public Range allowedAmount(int interval);
+	
 	@Override
 	public boolean equals(Object other);
 	
 	@Override
 	public int hashCode();
+	
+	public String toString(Tone bass);
 }

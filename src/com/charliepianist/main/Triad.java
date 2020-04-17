@@ -29,6 +29,7 @@ public class Triad implements Chord {
 	public static final Triad MAJ64 = new Triad(Interval.P4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
 	public static final Triad MAJ_TRIP_ROOT = new Triad(Interval.M3, Interval.P5, ROOT, new Range[] { Range.R13, Range.R11, Range.R02 });
 	
+	// NOTE: Any note for which there is a required followup interval(s) must be *required* in the chord (that is, Range must have a min of 1 for that tone) for short circuiting to work correctly in SATBGenerator
 	public static final Triad DOM = new Triad(Interval.M3, Interval.P5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 }, new SignedInterval[][] {
 		null, 
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
@@ -52,7 +53,7 @@ public class Triad implements Chord {
 	public static final Triad MIN64 = new Triad(Interval.P4, Interval.m6, SECOND, new Range[] { Range.R12, Range.R12, Range.R11 });
 	public static final Triad MIN_TRIP_ROOT = new Triad(Interval.m3, Interval.P5, ROOT, new Range[] { Range.R13, Range.R11, Range.R02 });
 	
-	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT, new Range[] { Range.R11, Range.R12, Range.R11 }, new SignedInterval[][] {
+	public static final Triad DIM = new Triad(Interval.m3, Interval.d5, ROOT, new Range[] { Range.R12, Range.R12, Range.R12 }, new SignedInterval[][] {
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2, false), new SignedInterval(Interval.M2, false) }
@@ -226,6 +227,10 @@ public class Triad implements Chord {
 		return ret;
 	}
 	
+	public String toString(Tone bass) {
+		return this.baseChord(bass).toString();
+	}
+	
 	@Override
 	public boolean equals(Object other) {
 		if(this == other) return true;
@@ -238,6 +243,50 @@ public class Triad implements Chord {
 	@Override
 	public int hashCode() {
 		return this.middle.hashCode() * 31 * 31 + this.top.hashCode() * 31 + this.inversion;
+	}
+	
+	@Override
+	public boolean canPrecedeStrictly(Chord next, Tone thisRoot, Tone nextRoot) {
+		if(requiredNext == null) return true;
+		List<Tone> nextTones = next.baseChord(nextRoot);
+		boolean valid = true;
+		
+		if(allowedNext(thisRoot, thisRoot.up(middle)) != null) {
+			valid = false;
+			// Check first interval
+			for(Tone t : allowedNext(thisRoot, thisRoot.up(middle))) {
+				for(Tone t2 : nextTones) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+						valid = true;
+						break;
+					}
+				}
+				if(valid == true) break;
+			}
+			if(!valid) return false;
+		}
+		
+		if(allowedNext(thisRoot, thisRoot.up(top)) != null) {
+			valid = false;
+			// Check second interval
+			for(Tone t : allowedNext(thisRoot, thisRoot.up(top))) {
+				for(Tone t2 : nextTones) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+						valid = true;
+						break;
+					}
+				}
+				if(valid == true) break;
+			}
+			if(!valid) return false;
+		}
+		
+		return true;
+	}
+	
+	public Range allowedAmount(int interval) {
+		if(allowedAmount.length <= interval || interval < 0) throw new IllegalArgumentException("interval out of bounds (there are only " + allowedAmount.length + " intervals in this chord; attempted to access the interval " + interval + ")");
+		return allowedAmount[interval];
 	}
 	
 	public static void main(String[] args) {

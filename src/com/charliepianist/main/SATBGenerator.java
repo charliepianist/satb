@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import com.charliepianist.main.Interval.SignedInterval;
 
 public class SATBGenerator {
+	private static final int FAILURE = 0;
+	private static final int SUCCESS = 1;
+	private static final int SHORT_CIRCUIT = 2;
+	
 	public static final int ENTROPY_NONE = Voice.ENTROPY_NONE;
 	public static final int ENTROPY_START = Voice.ENTROPY_START;
 	public static final int ENTROPY_ALL = Voice.ENTROPY_ALL;
@@ -50,12 +54,12 @@ public class SATBGenerator {
 		tonic = Tone.LOWEST_TONE.nextInstanceOf(tonic);
 		iterations = 0;
 		
-		if(generate(tonic, bassIntervals, chords, 0, entropy, true)) {
+		if(generate(tonic, bassIntervals, chords, 0, entropy, true) == SUCCESS) {
 			System.out.println("Found SATB after " + iterations + " iterations.");
 			return new Voice[] { s, a, t, b };
 		}else {
 			System.out.println("Relaxing strict voice leading... (failed to generate SATB with strict voice leading)");
-			if(generate(tonic, bassIntervals, chords, 0, entropy, false)) {
+			if(generate(tonic, bassIntervals, chords, 0, entropy, false) == SUCCESS) {
 				System.out.println("Found SATB after " + iterations + " iterations.");
 				return new Voice[] { s, a, t, b };
 			}
@@ -71,10 +75,10 @@ public class SATBGenerator {
 		return null;
 	}
 	
-	// True indicates success
+	// 0 indicates failure (after exhaustion), 1 indicates success, 2 indicates short circuit (some impossibility, so no point in continuing)
 	// Voices handle leaps and stepwise motion
 	// SATBGenerator handles most of the SATB voice-leading (e.g. tritone resolution, raised interval back down)
-	private boolean generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index, int entropy, boolean strictLeading) {
+	private int generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index, int entropy, boolean strictLeading) {
 		iterations++;
 		if(iterations % 100000 == 0) {
 			if(index > 0)
@@ -107,6 +111,12 @@ public class SATBGenerator {
 		// Is there a limited set of tones allowed?
 		sOptions = tones;
 		if(strictLeading && index >= 1) {
+			// Check if current chord even has all the required tones from the previous chord
+			if(!prevChord.canPrecedeStrictly(chord, prevRoot, root)) {
+				System.out.println("Cannot use strict voice leading for the sequence (" + prevChord.toString(prevRoot) + " to " + chord.toString(root));
+				return SHORT_CIRCUIT;
+			}
+			
 			sTemp = prevChord.allowedNext(prevRoot, s.last());
 			if(sTemp != null) {
 				sOptions = Arrays.asList(sTemp).stream()
@@ -148,6 +158,9 @@ public class SATBGenerator {
 			if(strictLeading && index >= 1) {
 				tTemp = prevChord.allowedNext(prevRoot, t.last());
 				if(tTemp != null) {
+					// If there are no remaining tones for the tenor to take, then skip this soprano tone
+					if(tones.stream().filter(sopranoTone::notEquals).filter(Arrays.asList(tTemp)::contains).collect(Collectors.toSet()).isEmpty()) continue;
+					
 					tOptions = Arrays.asList(tTemp).stream()
 							.distinct()
 							.filter(tOptions::contains)
@@ -188,6 +201,11 @@ public class SATBGenerator {
 				if(strictLeading && index >= 1) {
 					aTemp = prevChord.allowedNext(prevRoot, a.last());
 					if(aTemp != null) {
+						// If the soprano tone alone stopped all possible alto tones, then break out of the tenor tone loop, thereby skipping the soprano tone
+						if(tones.stream().filter(sopranoTone::notEquals).filter(Arrays.asList(aTemp)::contains).collect(Collectors.toSet()).isEmpty()) break;
+						// If there are no remaining tones for the alto to take, then skip this tenor tone
+						if(tones.stream().filter(sopranoTone::notEquals).filter(tenorTone::notEquals).filter(Arrays.asList(aTemp)::contains).collect(Collectors.toSet()).isEmpty()) continue;
+						
 						aOptions = Arrays.asList(aTemp).stream()
 								.distinct()
 								.filter(aOptions::contains)
@@ -259,12 +277,17 @@ public class SATBGenerator {
 						// Attempt using this combination of tones
 						if(index == numChords - 1) {
 							// We have found a combination for the last chord!
-							return true;
+							return SUCCESS;
 						}
 						// Attempt to build off of this combination of tones
-						if(generate(tonic, bassIntervals, chords, index + 1, entropy, strictLeading)) {
-							return true;
+						int nextChordResult = generate(tonic, bassIntervals, chords, index + 1, entropy, strictLeading); 
+						if(nextChordResult == SUCCESS) { // Solution found
+							return SUCCESS;
 						}
+						if(nextChordResult == SHORT_CIRCUIT) { // No possible solution given parameters, so stop here
+							return SHORT_CIRCUIT;
+						}
+						
 						s.pop();
 						a.pop();
 						t.pop();
@@ -277,6 +300,6 @@ public class SATBGenerator {
 			currTones.remove(1);
 		}
 		// Went through all possible combinations given past history and failed, so return false
-		return false;
+		return FAILURE;
 	}
 }

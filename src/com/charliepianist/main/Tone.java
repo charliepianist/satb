@@ -217,6 +217,10 @@ public class Tone {
 		return this.getKey() == other.getKey() && this.getOffset() == other.getOffset();
 	}
 	
+	public boolean notEquals(Object other) {
+		return !this.equals(other);
+	}
+	
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if(other == null) return false;

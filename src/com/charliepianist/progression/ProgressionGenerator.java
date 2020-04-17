@@ -12,7 +12,7 @@ import com.charliepianist.main.Voice;
 
 public class ProgressionGenerator {
 	
-	public static final int MAX_STATES = 25; // Max number of states of a generated progression
+	public static final int MAX_STATES = 100; // Max number of states of a generated progression
 	
 	public static List<State> generateStates(Profile profile, boolean minor) {
 		profile = new Profile(profile, minor);

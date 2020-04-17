@@ -17,11 +17,12 @@ public class Seventh implements Chord {
 	
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
 
-	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7, ROOT, new Range[] { Range.R11, Range.R12, Range.R01, Range.R11 });
+	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 });
 	public static final Seventh MAJ65 = new Seventh(Interval.m3, Interval.P5, Interval.m6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MAJ43 = new Seventh(Interval.M3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MAJ42 = new Seventh(Interval.m2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R11, Range.R12, Range.R12, Range.R01 });
 
+	// NOTE: Any note for which there is a required followup interval(s) must be *required* in the chord (that is, Range must have a min of 1 for that tone) for short circuiting to work correctly in SATBGenerator
 	public static final Seventh DOM7_STRICT = new Seventh(Interval.M3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 }, new SignedInterval[][] {
 		null,
 		new SignedInterval[] { SignedInterval.UNISON, new SignedInterval(Interval.m2) },
@@ -265,6 +266,10 @@ public class Seventh implements Chord {
 		return ret;
 	}
 	
+	public String toString(Tone bass) {
+		return this.baseChord(bass).toString();
+	}
+	
 	@Override
 	public boolean equals(Object other) {
 		if(this == other) return true;
@@ -277,6 +282,65 @@ public class Seventh implements Chord {
 	@Override
 	public int hashCode() {
 		return first.hashCode() * 31 * 31 * 31 + second.hashCode() * 31 * 31 + third.hashCode() * 31 + inversion;
+	}
+	
+	@Override
+	public boolean canPrecedeStrictly(Chord next, Tone thisRoot, Tone nextRoot) {
+		if(requiredNext == null) return true;
+		List<Tone> nextTones = next.baseChord(nextRoot);
+		boolean valid = true;
+		
+		if(allowedNext(thisRoot, thisRoot.up(first)) != null) {
+			valid = false;
+			// Check first interval
+			for(Tone t : allowedNext(thisRoot, thisRoot.up(first))) {
+				for(Tone t2 : nextTones) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+						valid = true;
+						break;
+					}
+				}
+				if(valid == true) break;
+			}
+			if(!valid) return false;
+		}
+		
+		if(allowedNext(thisRoot, thisRoot.up(second)) != null) {
+			valid = false;
+			// Check second interval
+			for(Tone t : allowedNext(thisRoot, thisRoot.up(second))) {
+				for(Tone t2 : nextTones) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+						valid = true;
+						break;
+					}
+				}
+				if(valid == true) break;
+			}
+			if(!valid) return false;
+		}
+		
+		if(allowedNext(thisRoot, thisRoot.up(third)) != null) {
+			valid = false;
+			// Check second interval
+			for(Tone t : allowedNext(thisRoot, thisRoot.up(third))) {
+				for(Tone t2 : nextTones) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+						valid = true;
+						break;
+					}
+				}
+				if(valid == true) break;
+			}
+			if(!valid) return false;
+		}
+		
+		return true;
+	}
+	
+	public Range allowedAmount(int interval) {
+		if(allowedAmount.length <= interval || interval < 0) throw new IllegalArgumentException("interval out of bounds (there are only " + allowedAmount.length + " intervals in this chord; attempted to access the interval " + interval + ")");
+		return allowedAmount[interval];
 	}
 	
 	public static void main(String[] args) {
