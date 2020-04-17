@@ -34,25 +34,33 @@ public class SATBGenerator {
 	}
 	
 	private Voice s, a, t, b;
+	private int iterations;
 	
 	public SATBGenerator() {
 		s = new Voice(SOPRANO_BOTTOM, SOPRANO_TOP);
 		a = new Voice(ALTO_BOTTOM, ALTO_TOP);
 		t = new Voice(TENOR_BOTTOM, TENOR_TOP);
 		b = new Voice(BASS_BOTTOM, BASS_TOP);
+		iterations = 0;
 	}
 	
 	public Voice[] generateSATB(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int entropy) {
 		if(bassIntervals.size() != chords.size()) throw new IllegalArgumentException("bassIntervals must have same size as chords.");
 		if(bassIntervals.size() == 0 || chords.size() == 0) throw new IllegalArgumentException("bassIntervals and chords cannot be empty.");
 		tonic = Tone.LOWEST_TONE.nextInstanceOf(tonic);
+		iterations = 0;
 		
 		if(generate(tonic, bassIntervals, chords, 0, entropy, true)) {
+			System.out.println("Found SATB after " + iterations + " iterations.");
 			return new Voice[] { s, a, t, b };
-		}else if(generate(tonic, bassIntervals, chords, 0, entropy, false)) {
+		}else {
 			System.out.println("Relaxing strict voice leading... (failed to generate SATB with strict voice leading)");
-			return new Voice[] { s, a, t, b };
+			if(generate(tonic, bassIntervals, chords, 0, entropy, false)) {
+				System.out.println("Found SATB after " + iterations + " iterations.");
+				return new Voice[] { s, a, t, b };
+			}
 		}
+		System.out.println("Failed to find SATB after " + iterations + " iterations.");
 		return null;
 	}
 	
@@ -67,6 +75,14 @@ public class SATBGenerator {
 	// Voices handle leaps and stepwise motion
 	// SATBGenerator handles most of the SATB voice-leading (e.g. tritone resolution, raised interval back down)
 	private boolean generate(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int index, int entropy, boolean strictLeading) {
+		iterations++;
+		if(iterations % 100000 == 0) {
+			if(index > 0)
+				System.out.println("Iteration " + iterations + " reached at chord " + (index + 1) + " (" + chords.get(index - 1).baseChord(tonic.up(bassIntervals.get(index - 1))) + " to " + chords.get(index).baseChord(tonic.up(bassIntervals.get(index))) + ")");
+			else
+				System.out.println("Iteration " + iterations + " reached at chord " + (index + 1) + " (" + chords.get(index).baseChord(tonic.up(bassIntervals.get(index))) + ")");
+		}
+		
 		Tone root = BASS_BOTTOM.nextInstanceOf(tonic.up(bassIntervals.get(index))); // Lowest in-range note that can be the root of the chord
 		Tone minTonic = Tone.MIN_TONE.nextInstanceOf(tonic);
 		Chord chord = chords.get(index);
