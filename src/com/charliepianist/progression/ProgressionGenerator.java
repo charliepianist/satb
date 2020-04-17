@@ -12,7 +12,7 @@ import com.charliepianist.main.Voice;
 
 public class ProgressionGenerator {
 	
-	public static final int MAX_STATES = 100; // Max number of states of a generated progression
+	public static final int MAX_STATES = 250; // Max number of states of a generated progression
 	
 	public static List<State> generateStates(Profile profile, boolean minor) {
 		profile = new Profile(profile, minor);
@@ -52,7 +52,8 @@ public class ProgressionGenerator {
 	}
 	
 	public static void main(String[] args) {
-		Voice[] satb = generateSATB(Profile.RANDOM, Tone.C4, false, SATBGenerator.ENTROPY_DEFAULT);
+		Voice[] satb = generateSATB(Profile.EXAMPLE, Tone.C4, false, SATBGenerator.ENTROPY_DEFAULT);
+		System.out.println("SATB is length " + satb[0].getLine().size());
 		SATB.output(satb, false);
 	}
 	

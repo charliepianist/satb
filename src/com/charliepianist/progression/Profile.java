@@ -113,130 +113,134 @@ public class Profile {
 		// vi CHORD
 		// UNIMPLEMENTED BELOW
 		exampleRelations.put(State.MAJ_vi, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vi6, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vi64, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// vii CHORD
 		exampleRelations.put(State.MAJ_vii, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vii6, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vii64, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// I7 CHORD
 		exampleRelations.put(State.MAJ_I7, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_I65, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_I43, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_I42, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// ii7 CHORD
 		exampleRelations.put(State.MAJ_ii7, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_ii65, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_ii43, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_ii42, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// IV7 CHORD
 		exampleRelations.put(State.MAJ_IV7, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_IV65, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_IV43, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_IV42, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// V7 CHORD
 		exampleRelations.put(State.MAJ_V7, new Distribution<State>(
-				new State[] { State.MAJ_I_TRIP_ROOT_END },
+				new State[] { State.MAJ_I_TRIP_ROOT },
+				new int[]   { 1}
+			));
+		exampleRelations.put(State.MAJ_I_TRIP_ROOT, new Distribution<State>(
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_V65, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_V43, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_V42, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// vi7 CHORD
 		exampleRelations.put(State.MAJ_vi7, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vi65, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vi43, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vi42, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		// vii7 CHORD
 		exampleRelations.put(State.MAJ_vii7, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vii65, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vii43, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 		exampleRelations.put(State.MAJ_vii42, new Distribution<State>(
-				new State[] { State.MAJ_I_END },
+				new State[] { State.MAJ_I },
 				new int[]   { 1}
 			));
 	}

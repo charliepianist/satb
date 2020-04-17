@@ -256,7 +256,7 @@ public class Triad implements Chord {
 			// Check first interval
 			for(Tone t : allowedNext(thisRoot, thisRoot.up(middle))) {
 				for(Tone t2 : nextTones) {
-					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= allowedAmount(1).getMin())) {
 						valid = true;
 						break;
 					}
@@ -271,7 +271,7 @@ public class Triad implements Chord {
 			// Check second interval
 			for(Tone t : allowedNext(thisRoot, thisRoot.up(top))) {
 				for(Tone t2 : nextTones) {
-					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= allowedAmount(2).getMin())) {
 						valid = true;
 						break;
 					}

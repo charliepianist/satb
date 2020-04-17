@@ -295,7 +295,7 @@ public class Seventh implements Chord {
 			// Check first interval
 			for(Tone t : allowedNext(thisRoot, thisRoot.up(first))) {
 				for(Tone t2 : nextTones) {
-					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= allowedAmount(1).getMin())) {
 						valid = true;
 						break;
 					}
@@ -310,7 +310,7 @@ public class Seventh implements Chord {
 			// Check second interval
 			for(Tone t : allowedNext(thisRoot, thisRoot.up(second))) {
 				for(Tone t2 : nextTones) {
-					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= allowedAmount(2).getMin())) {
 						valid = true;
 						break;
 					}
@@ -325,7 +325,7 @@ public class Seventh implements Chord {
 			// Check second interval
 			for(Tone t : allowedNext(thisRoot, thisRoot.up(third))) {
 				for(Tone t2 : nextTones) {
-					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= 1)) {
+					if(t.sameNote(t2) && !(t2.equals(nextRoot) && next.allowedAmount(0).getMax() <= allowedAmount(3).getMin())) {
 						valid = true;
 						break;
 					}
