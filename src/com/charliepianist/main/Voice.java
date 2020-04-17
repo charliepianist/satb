@@ -223,7 +223,7 @@ public class Voice {
 		}else if(consecutiveSteps == 4) {
 			return 2;
 		}else {
-			return 3;
+			return 2;
 		}
 	}
 	
