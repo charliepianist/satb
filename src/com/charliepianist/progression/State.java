@@ -7,11 +7,12 @@ import com.charliepianist.main.Triad;
 
 public class State {
 	private Chord chord; // Chord quality
-	private Interval bassInterval; // Interval of bass from tonic (normalized)
+	private Interval rootInterval; // Interval of root from tonic (normalized)
+	private boolean isEnd; // Is this state an end state?
 	
 	// MAJOR KEY TRIADS - STANDARD
 
-	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON);
+	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON, true);
 	public static final State MAJ_I6 = new State(Triad.MAJ63, Interval.UNISON);
 	public static final State MAJ_I64 = new State(Triad.MAJ64, Interval.UNISON);
 	public static final State MAJ_ii = new State(Triad.MIN, Interval.M2);
@@ -62,7 +63,7 @@ public class State {
 	
 	// MINOR KEY TRIADS - STANDARD
 
-	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON);
+	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON, true);
 	public static final State MIN_i6 = new State(Triad.MIN63, Interval.UNISON);
 	public static final State MIN_i64 = new State(Triad.MIN64, Interval.UNISON);
 	public static final State MIN_ii = new State(Triad.DIM, Interval.M2);
@@ -115,17 +116,30 @@ public class State {
 	public static final State MIN_vii43 = new State(Seventh.DIM43, Interval.M7);
 	public static final State MIN_vii42 = new State(Seventh.DIM42, Interval.M7);
 	
-	public State(Chord chord, Interval bassInterval) {
+	public State(Chord chord, Interval rootInterval) {
+		this(chord, rootInterval, false);
+	}
+	
+	public State(Chord chord, Interval rootInterval, boolean isEnd) {
 		this.chord = chord;
-		this.bassInterval = bassInterval;
+		this.rootInterval = rootInterval;
+		this.isEnd = isEnd;
 	}
 	
 	public Chord getChord() {
 		return chord;
 	}
 	
+	public Interval getRootInterval() {
+		return this.rootInterval;
+	}
+	
 	public Interval getBassInterval() {
-		return bassInterval;
+		return rootInterval.add(chord.rootToBass()).normalize();
+	}
+	
+	public boolean isEnd() {
+		return isEnd;
 	}
 	
 	@Override
@@ -134,11 +148,11 @@ public class State {
 		if(this == other) return true;
 		if(!(other instanceof State)) return false;
 		State s = (State) other;
-		return s.bassInterval.equals(this.bassInterval) && s.chord.equals(this.chord);
+		return s.rootInterval.equals(this.rootInterval) && s.chord.equals(this.chord);
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.bassInterval.hashCode() * 31 * 31 + this.chord.hashCode();
+		return this.rootInterval.hashCode() * 31 * 31 + this.chord.hashCode();
 	}
 }

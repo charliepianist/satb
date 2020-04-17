@@ -561,7 +561,7 @@ public class SATB {
 			break;
 		}
 		
-		int entropy = SATBGenerator.ENTROPY_START;
+		int entropy = SATBGenerator.ENTROPY_DEFAULT;
 		switch(entropyStr.substring(entropyStr.indexOf(':') + 1).replace(" ", "").toLowerCase()) {
 		case "all":
 			entropy = SATBGenerator.ENTROPY_ALL;

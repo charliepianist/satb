@@ -13,6 +13,7 @@ public class Voice {
 	public static int ENTROPY_NONE = 0;
 	public static int ENTROPY_START = 1;
 	public static int ENTROPY_ALL = 2;
+	public static int ENTROPY_DEFAULT = ENTROPY_START;
 	
 	public Voice(Tone top, Tone bottom) {
 		this(new ArrayList<Tone>(), top, bottom);
@@ -61,6 +62,9 @@ public class Voice {
 			tones = tones.stream().filter(t -> t.leq(lastTone.up(Interval.OCTAVE)) && t.geq(lastTone.down(Interval.OCTAVE))).collect(Collectors.toList());
 		}
 		if(entropy >= ENTROPY_ALL || (entropy >= ENTROPY_START && this.isEmpty())) Collections.shuffle(tones);
+		else if(!this.isEmpty()) {
+			Collections.sort(tones, Tone.byDistanceTo(this.last()));
+		}
 		return tones;
 	}
 	

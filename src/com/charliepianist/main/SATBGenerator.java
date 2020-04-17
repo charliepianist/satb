@@ -12,6 +12,7 @@ public class SATBGenerator {
 	public static final int ENTROPY_NONE = Voice.ENTROPY_NONE;
 	public static final int ENTROPY_START = Voice.ENTROPY_START;
 	public static final int ENTROPY_ALL = Voice.ENTROPY_ALL;
+	public static final int ENTROPY_DEFAULT = Voice.ENTROPY_DEFAULT;
 	
 	public static final Tone SOPRANO_TOP = Tone.HIGHEST_TONE;
 	public static final Tone SOPRANO_BOTTOM = Tone.C4;
@@ -49,6 +50,13 @@ public class SATBGenerator {
 			return new Voice[] { s, a, t, b };
 		}else if(generate(tonic, bassIntervals, chords, 0, entropy, false)) {
 			System.out.println("Relaxing strict voice leading... (failed to generate SATB with strict voice leading)");
+			return new Voice[] { s, a, t, b };
+		}
+		return null;
+	}
+	
+	public Voice[] getSATB() {
+		if(!s.isEmpty() && !a.isEmpty() && !t.isEmpty() && !b.isEmpty()) {
 			return new Voice[] { s, a, t, b };
 		}
 		return null;
