@@ -14,7 +14,8 @@ public class State {
 
 	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON);
 	public static final State MAJ_I_END = new State(Triad.MAJ, Interval.UNISON, 1);
-	public static final State MAJ_I_TRIP_ROOT = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON, 1);
+	public static final State MAJ_I_TRIP_ROOT = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON);
+	public static final State MAJ_I_TRIP_ROOT_END = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON, 1);
 	public static final State MAJ_I6 = new State(Triad.MAJ63, Interval.UNISON);
 	public static final State MAJ_I64 = new State(Triad.MAJ64, Interval.UNISON);
 	public static final State MAJ_ii = new State(Triad.MIN, Interval.M2);
@@ -70,7 +71,8 @@ public class State {
 
 	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON);
 	public static final State MIN_i_END = new State(Triad.MIN, Interval.UNISON, 1);
-	public static final State MIN_i_TRIP_ROOT = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON, 1);
+	public static final State MIN_i_TRIP_ROOT = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON);
+	public static final State MIN_i_TRIP_ROOT_END = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON, 1);
 	public static final State MIN_i6 = new State(Triad.MIN63, Interval.UNISON);
 	public static final State MIN_i64 = new State(Triad.MIN64, Interval.UNISON);
 	public static final State MIN_ii = new State(Triad.DIM, Interval.M2);
@@ -145,7 +147,7 @@ public class State {
 	}
 	
 	public boolean isEnd() {
-		return Math.random() < this.probEnd;
+		return Math.random() <= this.probEnd;
 	}
 	
 	@Override

@@ -47,7 +47,7 @@ public class ProgressionGenerator {
 	}
 	
 	public static void main(String[] args) {
-		Voice[] satb = generateSATB(Profile.TEST, Tone.C4, false, SATBGenerator.ENTROPY_DEFAULT);
+		Voice[] satb = generateSATB(Profile.EXAMPLE, Tone.C4, false, SATBGenerator.ENTROPY_DEFAULT);
 		SATB.output(satb, false);
 	}
 	

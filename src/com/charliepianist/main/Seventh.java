@@ -17,7 +17,7 @@ public class Seventh implements Chord {
 	
 	public static final Interval MAX_INTERVAL = Interval.THREE_OCTAVES;
 
-	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 });
+	public static final Seventh MAJ7 = new Seventh(Interval.M3, Interval.P5, Interval.M7, ROOT, new Range[] { Range.R11, Range.R12, Range.R01, Range.R11 });
 	public static final Seventh MAJ65 = new Seventh(Interval.m3, Interval.P5, Interval.m6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MAJ43 = new Seventh(Interval.M3, Interval.P4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MAJ42 = new Seventh(Interval.m2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R11, Range.R12, Range.R12, Range.R01 });
@@ -77,15 +77,15 @@ public class Seventh implements Chord {
 	public static final Seventh DOM43 = DOM43_LOOSE;
 	public static final Seventh DOM42 = DOM42_LOOSE;
 	
-	public static final Seventh MIN7 = new Seventh(Interval.m3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R12, Range.R12, Range.R01, Range.R11 });
-	public static final Seventh MIN65 = new Seventh(Interval.M3, Interval.P5, Interval.M6, FIRST, new Range[] { Range.R12, Range.R01, Range.R11, Range.R12 });
+	public static final Seventh MIN7 = new Seventh(Interval.m3, Interval.P5, Interval.m7, ROOT, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
+	public static final Seventh MIN65 = new Seventh(Interval.M3, Interval.P5, Interval.M6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh MIN43 = new Seventh(Interval.m3, Interval.P4, Interval.m6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
-	public static final Seventh MIN42 = new Seventh(Interval.M2, Interval.P4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R12, Range.R11, Range.R01 });
+	public static final Seventh MIN42 = new Seventh(Interval.M2, Interval.P4, Interval.M6, THIRD, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 
 	public static final Seventh HALFDIM7 = new Seventh(Interval.m3, Interval.d5, Interval.m7, ROOT, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh HALFDIM65 = new Seventh(Interval.m3, Interval.P5, Interval.M6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
-	public static final Seventh HALFDIM43 = new Seventh(Interval.M3, Interval.A4, Interval.M6, SECOND, new Range[] { Range.R12, Range.R11, Range.R12, Range.R01 });
-	public static final Seventh HALFDIM42 = new Seventh(Interval.M2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R12, Range.R12, Range.R01, Range.R12 });
+	public static final Seventh HALFDIM43 = new Seventh(Interval.M3, Interval.A4, Interval.M6, SECOND, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
+	public static final Seventh HALFDIM42 = new Seventh(Interval.M2, Interval.P4, Interval.m6, THIRD, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 
 	public static final Seventh DIM7 = new Seventh(Interval.m3, Interval.d5, Interval.d7, ROOT, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });
 	public static final Seventh DIM65 = new Seventh(Interval.m3, Interval.d5, Interval.M6, FIRST, new Range[] { Range.R11, Range.R11, Range.R11, Range.R11 });

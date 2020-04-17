@@ -27,6 +27,7 @@ public class SATBGenerator {
 	public static final HashMap<Interval, SignedInterval[]> preferredResolutions;
 	static {
 		preferredResolutions = new HashMap<Interval, SignedInterval[]>();
+		preferredResolutions.put(Interval.P4, new SignedInterval[] { new SignedInterval(Interval.M3), SignedInterval.UNISON });
 		preferredResolutions.put(Interval.m6, new SignedInterval[] { new SignedInterval(Interval.m2, false), new SignedInterval(Interval.A1), SignedInterval.UNISON });
 		preferredResolutions.put(Interval.A5, new SignedInterval[] { new SignedInterval(Interval.m2), new SignedInterval(Interval.A1, false), SignedInterval.UNISON });
 		preferredResolutions.put(Interval.M7, new SignedInterval[] { new SignedInterval(Interval.m2), new SignedInterval(Interval.M2, false), SignedInterval.UNISON });
@@ -208,15 +209,15 @@ public class SATBGenerator {
 					
 					// Is there a limited set of tones allowed?
 					bOptions = root.allInstances();
-					if(strictLeading && index >= 1) {
-						bTemp = prevChord.allowedNext(prevRoot, b.last());
-						if(bTemp != null) {
-							bOptions = Arrays.asList(bTemp).stream()
-									.distinct()
-									.filter(bOptions::contains)
-									.collect(Collectors.toList());
-						}	
-					}
+//					if(strictLeading && index >= 1) {
+//						bTemp = prevChord.allowedNext(prevRoot, b.last());
+//						if(bTemp != null) {
+//							bOptions = Arrays.asList(bTemp).stream()
+//									.distinct()
+//									.filter(bOptions::contains)
+//									.collect(Collectors.toList());
+//						}	
+//					}
 					bOptions = b.filterInRange(bOptions, entropy);
 					
 					// Prioritize preferred resolutions
@@ -233,7 +234,7 @@ public class SATBGenerator {
 					}
 					
 					for(Tone bassTone : bOptions) {
-						if(bassTone.gt(tenorTone)) continue;
+						if(bassTone.gt(tenorTone) || bassTone.lt(tenorTone.down(Interval.TWO_OCTAVES))) continue;
 						s.add(sopranoTone);
 						a.add(altoTone);
 						t.add(tenorTone);
