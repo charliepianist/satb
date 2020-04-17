@@ -12,7 +12,8 @@ public class State {
 	
 	// MAJOR KEY TRIADS - STANDARD
 
-	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON, 0.4);
+	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON);
+	public static final State MAJ_I_END = new State(Triad.MAJ, Interval.UNISON, 1);
 	public static final State MAJ_I_TRIP_ROOT = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON, 1);
 	public static final State MAJ_I6 = new State(Triad.MAJ63, Interval.UNISON);
 	public static final State MAJ_I64 = new State(Triad.MAJ64, Interval.UNISON);
@@ -25,9 +26,12 @@ public class State {
 	public static final State MAJ_IV = new State(Triad.MAJ, Interval.P4);
 	public static final State MAJ_IV6 = new State(Triad.MAJ6, Interval.P4);
 	public static final State MAJ_IV64 = new State(Triad.MAJ64, Interval.P4);
-	public static final State MAJ_V = new State(Triad.DOM, Interval.P5);
-	public static final State MAJ_V6 = new State(Triad.DOM6, Interval.P5);
-	public static final State MAJ_V64 = new State(Triad.DOM64, Interval.P5);
+	public static final State MAJ_V = new State(Triad.MAJ, Interval.P5);
+	public static final State MAJ_V6 = new State(Triad.MAJ63, Interval.P5);
+	public static final State MAJ_V64 = new State(Triad.MAJ64, Interval.P5);
+	public static final State MAJ_Vdom = new State(Triad.DOM, Interval.P5);
+	public static final State MAJ_V6dom = new State(Triad.DOM6, Interval.P5);
+	public static final State MAJ_V64dom = new State(Triad.DOM64, Interval.P5);
 	public static final State MAJ_vi = new State(Triad.MIN, Interval.M6);
 	public static final State MAJ_vi6 = new State(Triad.MIN63, Interval.M6);
 	public static final State MAJ_vi64 = new State(Triad.MIN64, Interval.M6);
@@ -64,7 +68,8 @@ public class State {
 	
 	// MINOR KEY TRIADS - STANDARD
 
-	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON, 0.4);
+	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON);
+	public static final State MIN_i_END = new State(Triad.MIN, Interval.UNISON, 1);
 	public static final State MIN_i_TRIP_ROOT = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON, 1);
 	public static final State MIN_i6 = new State(Triad.MIN63, Interval.UNISON);
 	public static final State MIN_i64 = new State(Triad.MIN64, Interval.UNISON);
@@ -77,9 +82,12 @@ public class State {
 	public static final State MIN_iv = new State(Triad.MIN, Interval.P4);
 	public static final State MIN_iv6 = new State(Triad.MIN63, Interval.P4);
 	public static final State MIN_iv64 = new State(Triad.MIN64, Interval.P4);
-	public static final State MIN_V = new State(Triad.DOM, Interval.P5);
-	public static final State MIN_V6 = new State(Triad.DOM6, Interval.P5);
-	public static final State MIN_V64 = new State(Triad.DOM64, Interval.P5);
+	public static final State MIN_V = new State(Triad.MAJ, Interval.P5);
+	public static final State MIN_V6 = new State(Triad.MAJ63, Interval.P5);
+	public static final State MIN_V64 = new State(Triad.MAJ64, Interval.P5);
+	public static final State MIN_Vdom = new State(Triad.DOM, Interval.P5);
+	public static final State MIN_V6dom = new State(Triad.DOM6, Interval.P5);
+	public static final State MIN_V64dom = new State(Triad.DOM64, Interval.P5);
 	public static final State MIN_VI = new State(Triad.MAJ, Interval.m6);
 	public static final State MIN_VI6 = new State(Triad.MAJ63, Interval.m6);
 	public static final State MIN_VI64 = new State(Triad.MAJ64, Interval.m6);
