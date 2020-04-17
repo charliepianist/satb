@@ -14,7 +14,7 @@ public class SATB {
 	public static final int TONES = 2;
 	
 	private static final String[] ioNames = new String[] {
-			"data/standard.txt",
+			"data/chromatic_mediants.txt",
 			"out/out.midi"
 	};
 	
@@ -216,6 +216,10 @@ public class SATB {
 			case "bIII53":
 			case "bVI":
 			case "bVI53":
+			case "III": // Chromatic mediants
+			case "III53": // Chromatic mediants
+			case "VI": // Chromatic mediants
+			case "VI53": // Chromatic mediants
 			case "bVII":
 			case "bVII53":
 				return Triad.MAJ53;
@@ -231,6 +235,10 @@ public class SATB {
 			case "bIII63":
 			case "bVI6":
 			case "bVI63":
+			case "III6": // Chromatic mediants
+			case "III63": // Chromatic mediants
+			case "VI6": // Chromatic mediants
+			case "VI63": // Chromatic mediants
 			case "bVII6":
 			case "bVII63":
 				return Triad.MAJ63;
@@ -240,6 +248,8 @@ public class SATB {
 			case "bII64":
 			case "bIII64":
 			case "bVI64":
+			case "III64": // Chromatic mediants
+			case "VI64": // Chromatic mediants
 			case "bVII64":
 				return Triad.MAJ64;
 			case "i":
@@ -565,8 +575,8 @@ public class SATB {
 		}
 		
 		// Start reading the rest of the file
-		ArrayList<Interval> bassIntervals = new ArrayList<Interval>();
-		ArrayList<Chord> chords = new ArrayList<Chord>();
+		ArrayList<Interval> bassIntervals = new ArrayList<Interval>(); // Intervals (upwards) from tonic
+		ArrayList<Chord> chords = new ArrayList<Chord>(); // Chord qualities
 		
 		String next = reader.readLine();
 		while(next != null) {

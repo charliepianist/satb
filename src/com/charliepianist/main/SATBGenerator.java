@@ -26,9 +26,9 @@ public class SATBGenerator {
 	public static final HashMap<Interval, SignedInterval[]> preferredResolutions;
 	static {
 		preferredResolutions = new HashMap<Interval, SignedInterval[]>();
-		preferredResolutions.put(Interval.m6, new SignedInterval[] { new SignedInterval(Interval.m2, false), SignedInterval.UNISON });
-		preferredResolutions.put(Interval.A5, new SignedInterval[] { new SignedInterval(Interval.m2), SignedInterval.UNISON });
-		preferredResolutions.put(Interval.M7, new SignedInterval[] { new SignedInterval(Interval.m2), SignedInterval.UNISON, new SignedInterval(Interval.M2, false) });
+		preferredResolutions.put(Interval.m6, new SignedInterval[] { new SignedInterval(Interval.m2, false), new SignedInterval(Interval.A1), SignedInterval.UNISON });
+		preferredResolutions.put(Interval.A5, new SignedInterval[] { new SignedInterval(Interval.m2), new SignedInterval(Interval.A1, false), SignedInterval.UNISON });
+		preferredResolutions.put(Interval.M7, new SignedInterval[] { new SignedInterval(Interval.m2), new SignedInterval(Interval.M2, false), SignedInterval.UNISON });
 	}
 	
 	private Voice s, a, t, b;

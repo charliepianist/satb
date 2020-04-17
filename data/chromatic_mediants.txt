@@ -1,0 +1,13 @@
+Bb
+roman
+entropy: default
+I
+V64
+I6
+III64
+vi
+V
+I
+bVI6
+IV
+I
