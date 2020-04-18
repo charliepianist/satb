@@ -8,14 +8,14 @@ import com.charliepianist.main.Triad;
 public class State {
 	private Chord chord; // Chord quality
 	private Interval rootInterval; // Interval of root from tonic (normalized)
-	private double probEnd; // What probability does this have of ending the sequence?
+	private boolean atEnd; // Does this end a sequence?
 	
 	// MAJOR KEY TRIADS - STANDARD
 
 	public static final State MAJ_I = new State(Triad.MAJ, Interval.UNISON);
-	public static final State MAJ_I_END = new State(Triad.MAJ, Interval.UNISON, 1);
+	public static final State MAJ_I_END = new State(Triad.MAJ, Interval.UNISON, true);
 	public static final State MAJ_I_TRIP_ROOT = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON);
-	public static final State MAJ_I_TRIP_ROOT_END = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON, 1);
+	public static final State MAJ_I_TRIP_ROOT_END = new State(Triad.MAJ_TRIP_ROOT, Interval.UNISON, true);
 	public static final State MAJ_I6 = new State(Triad.MAJ63, Interval.UNISON);
 	public static final State MAJ_I64 = new State(Triad.MAJ64, Interval.UNISON);
 	public static final State MAJ_ii = new State(Triad.MIN, Interval.M2);
@@ -70,9 +70,9 @@ public class State {
 	// MINOR KEY TRIADS - STANDARD
 
 	public static final State MIN_i = new State(Triad.MIN, Interval.UNISON);
-	public static final State MIN_i_END = new State(Triad.MIN, Interval.UNISON, 1);
+	public static final State MIN_i_END = new State(Triad.MIN, Interval.UNISON, true);
 	public static final State MIN_i_TRIP_ROOT = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON);
-	public static final State MIN_i_TRIP_ROOT_END = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON, 1);
+	public static final State MIN_i_TRIP_ROOT_END = new State(Triad.MIN_TRIP_ROOT, Interval.UNISON, true);
 	public static final State MIN_i6 = new State(Triad.MIN63, Interval.UNISON);
 	public static final State MIN_i64 = new State(Triad.MIN64, Interval.UNISON);
 	public static final State MIN_ii = new State(Triad.DIM, Interval.M2);
@@ -135,13 +135,13 @@ public class State {
 	};
 	
 	public State(Chord chord, Interval rootInterval) {
-		this(chord, rootInterval, 0);
+		this(chord, rootInterval, false);
 	}
 	
-	public State(Chord chord, Interval rootInterval, double probEnd) {
+	public State(Chord chord, Interval rootInterval, boolean atEnd) {
 		this.chord = chord;
 		this.rootInterval = rootInterval;
-		this.probEnd = probEnd;
+		this.atEnd = atEnd;
 	}
 	
 	public Chord getChord() {
@@ -157,7 +157,7 @@ public class State {
 	}
 	
 	public boolean isEnd() {
-		return Math.random() <= this.probEnd;
+		return this.atEnd;
 	}
 	
 	@Override
@@ -166,12 +166,12 @@ public class State {
 		if(this == other) return true;
 		if(!(other instanceof State)) return false;
 		State s = (State) other;
-		return s.rootInterval.equals(this.rootInterval) && s.chord.equals(this.chord) && Double.compare(this.probEnd, s.probEnd) == 0;
+		return s.rootInterval.equals(this.rootInterval) && s.chord.equals(this.chord) && this.atEnd == s.atEnd;
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.rootInterval.hashCode() * 31 * 31 + this.chord.hashCode();
+		return this.rootInterval.hashCode() * 31 * 31 + this.chord.hashCode() + (this.atEnd ? 31 * 31 * 31 : 0);
 	}
 	
 	public String toString() {

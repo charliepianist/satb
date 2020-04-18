@@ -19,13 +19,13 @@ public class ProgressionGenerator {
 	}
 	
 	public static List<State> generateStates(Profile profile, boolean minor, int maxStates) {
-		profile = new Profile(profile, minor);
+		profile = profile.instantiateCopy(minor);
 		ArrayList<State> list = new ArrayList<State>();
 		list.add(profile.getCurrent()); // Add initial tonic chord
 		int states = 1;
 		
 		State next = profile.next();
-		while(!next.isEnd() && states < maxStates - 1) {
+		while(!profile.hasEnded() && states < maxStates - 1) {
 			list.add(next);
 			states++;
 			next = profile.next();
@@ -60,7 +60,7 @@ public class ProgressionGenerator {
 	}
 	
 	public static void main(String[] args) {
-		Voice[] satb = generateSATB(Profile.RANDOM_NO_LIMIT, Tone.C4, false, 1000, SATBGenerator.ENTROPY_DEFAULT);
+		Voice[] satb = generateSATB(MarkovProfile.RANDOM_NO_LIMIT, Tone.C4, false, 1000, SATBGenerator.ENTROPY_ALL);
 		System.out.println("SATB is length " + satb[0].getLine().size());
 		SATB.output(satb, false);
 	}
