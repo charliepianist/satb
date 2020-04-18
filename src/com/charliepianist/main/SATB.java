@@ -639,7 +639,8 @@ public class SATB {
 		if(satb == null) {
 			System.out.println("Failed to generate SATB for given file (could not find voicing that follows SATB rules).");
 		}else {
-			System.out.println(satbToString(satb));
+			if(satb[0].getLine().size() <= 500) // Don't print lines if too long
+				System.out.println(satbToString(satb));
 			try {
 				PatternOutput.saveSATB(satb, ioNames[1]);
 				System.out.println("Saved to MIDI at '" + ioNames[1] + "'");

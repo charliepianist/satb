@@ -48,22 +48,33 @@ public class SATBGenerator {
 		iterations = 0;
 	}
 	
+	public Voice[] generateSATB(Tone tonic, List<Interval> bassIntervals, List<Chord> chords) {
+		return generateSATB(tonic, bassIntervals, chords, ENTROPY_DEFAULT);
+	}
+	
 	public Voice[] generateSATB(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int entropy) {
+		return generateSATB(tonic, bassIntervals, chords, entropy, true);
+	}
+	
+	public Voice[] generateSATB(Tone tonic, List<Interval> bassIntervals, List<Chord> chords, int entropy, boolean attemptStrictLeading) {
 		if(bassIntervals.size() != chords.size()) throw new IllegalArgumentException("bassIntervals must have same size as chords.");
 		if(bassIntervals.size() == 0 || chords.size() == 0) throw new IllegalArgumentException("bassIntervals and chords cannot be empty.");
 		tonic = Tone.LOWEST_TONE.nextInstanceOf(tonic);
 		iterations = 0;
 		
-		if(generate(tonic, bassIntervals, chords, 0, entropy, true) == SUCCESS) {
-			System.out.println("Found SATB after " + iterations + " iterations.");
-			return new Voice[] { s, a, t, b };
-		}else {
-			System.out.println("Relaxing strict voice leading... (failed to generate SATB with strict voice leading)");
-			if(generate(tonic, bassIntervals, chords, 0, entropy, false) == SUCCESS) {
+		if(attemptStrictLeading) {
+			if(generate(tonic, bassIntervals, chords, 0, entropy, true) == SUCCESS) {
 				System.out.println("Found SATB after " + iterations + " iterations.");
 				return new Voice[] { s, a, t, b };
 			}
+			System.out.println("Relaxing strict voice leading... (failed to generate SATB with strict voice leading)");
 		}
+		if(!attemptStrictLeading) System.out.println("Relaxing strict voice leading... (skipped attempt with strict voice leading)");
+		if(generate(tonic, bassIntervals, chords, 0, entropy, false) == SUCCESS) {
+			System.out.println("Found SATB after " + iterations + " iterations.");
+			return new Voice[] { s, a, t, b };
+		}
+
 		System.out.println("Failed to find SATB after " + iterations + " iterations.");
 		return null;
 	}

@@ -18,11 +18,24 @@ public class Profile {
 	private static final HashMap<State, Distribution<State>> randomRelations;
 	static {
 		randomRelations = new HashMap<State, Distribution<State>>();
-		int numStates = State.ALL_STATES.length;
+		State[] states = State.ALL_STATES;
+		int numStates = states.length;
 		int[] weights = new int[numStates];
 		Arrays.fill(weights, 1);
 		for(int i = 0; i < numStates; i++) {
-			randomRelations.put(State.ALL_STATES[i], new Distribution<State>(State.ALL_STATES, weights));
+			randomRelations.put(states[i], new Distribution<State>(states, weights));
+		}
+	}
+	
+	private static final HashMap<State, Distribution<State>> randomNoEndRelations;
+	static {
+		randomNoEndRelations = new HashMap<State, Distribution<State>>();
+		State[] states = State.ALL_STATES_NO_END;
+		int numStates = states.length;
+		int[] weights = new int[numStates];
+		Arrays.fill(weights, 1);
+		for(int i = 0; i < numStates; i++) {
+			randomNoEndRelations.put(states[i], new Distribution<State>(states, weights));
 		}
 	}
 	
@@ -246,29 +259,41 @@ public class Profile {
 	}
 
 	public static final Profile TEST = new Profile(testRelations);
-	public static final Profile RANDOM = new Profile(randomRelations);
+	public static final Profile RANDOM = new Profile(randomRelations, false);
+	public static final Profile RANDOM_NO_LIMIT = new Profile(randomNoEndRelations, false);
 	public static final Profile EXAMPLE = new Profile(exampleRelations);
 	
 	private HashMap<State, Distribution<State>> relations;
 	private State current;
 	private int numStates;
+	private boolean attemptStrict;
 	
 	public Profile(HashMap<State, Distribution<State>> relations) {
+		this(relations, true);
+	}
+	
+	public Profile(HashMap<State, Distribution<State>> relations, boolean attemptStrict) {
 		if(relations == null) throw new IllegalArgumentException("relations cannot be null");
 		
 		this.relations = relations;
+		this.attemptStrict = attemptStrict;
 		current = null;
 		numStates = 0;
 	}
 	
 	public Profile(Profile profile, boolean minor) {
 		this.relations = profile.relations;
+		this.attemptStrict = profile.attemptStrict;
 		numStates = 1;
 		if(minor) {
 			current = State.MIN_i;
 		}else {
 			current = State.MAJ_I;
 		}
+	}
+	
+	public boolean attemptStrict() {
+		return attemptStrict;
 	}
 	
 	public State next() {

@@ -54,13 +54,13 @@ public class ProgressionGenerator {
 		}
 		
 		SATBGenerator generator = new SATBGenerator();
-		Voice[] satb = generator.generateSATB(tonic, bassIntervals, chords, entropy);
+		Voice[] satb = generator.generateSATB(tonic, bassIntervals, chords, entropy, profile.attemptStrict());
 		
 		return satb;
 	}
 	
 	public static void main(String[] args) {
-		Voice[] satb = generateSATB(Profile.EXAMPLE, Tone.C4, false, 500, SATBGenerator.ENTROPY_DEFAULT);
+		Voice[] satb = generateSATB(Profile.RANDOM_NO_LIMIT, Tone.C4, false, 1000, SATBGenerator.ENTROPY_DEFAULT);
 		System.out.println("SATB is length " + satb[0].getLine().size());
 		SATB.output(satb, false);
 	}
